@@ -18,11 +18,11 @@ const val MAIL_SAVE_KEY = "mail"
 const val NAME_SAVE_KEY = "name"
 const val AVATAR_SAVE_KEY = "avatar"
 
-class PlutoModel(context: Context) {
+internal class PlutoModel(context: Context) {
     private val sharedPref: SharedPreferences =
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
 
-    val deviceID: String by lazy {
+    val deviceID: String? by lazy {
         var uuid = sharedPref.getString(UUID_SAVE_KEY, null)
         if (uuid == null) {
             uuid = UUID.randomUUID().toString()

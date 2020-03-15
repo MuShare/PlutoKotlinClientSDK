@@ -3,7 +3,7 @@ package com.mushare.plutosdk
 import android.util.Base64
 import java.nio.charset.Charset
 
-class JwtUtils {
+internal class JwtUtils {
     companion object {
         fun decodeBody(jwt: String): String? {
             val splits = jwt.split('.')

@@ -6,23 +6,14 @@ import androidx.core.os.LocaleListCompat
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.util.*
 import kotlin.properties.Delegates
 
-class Pluto {
+class Pluto private constructor() {
     enum class State {
         notSignin,
         loading,
         signin
-    }
-
-    init {
-        refreshToken {
-            state = if (it == null) {
-                State.notSignin
-            } else {
-                State.signin
-            }
-        }
     }
 
     internal val data by lazy { PlutoModel(context!!) }
@@ -34,15 +25,27 @@ class Pluto {
 
     private val client by lazy { OkHttpClient() }
 
-    internal val commonHeaders by lazy {
-        Headers.headersOf("Accept-Language", LocaleListCompat.getDefault().toLanguageTags())
+    internal val commonHeaders
+        get() = Headers.headersOf("Accept-Language", getLanguage())
+
+    private fun getLanguage(): String {
+        val locale = LocaleListCompat.getDefault()
+            .getFirstMatch(arrayOf("zh-Hans", "zh-Hant", "yue-Hans", "yue-Hant", "en"))
+            ?: Locale.getDefault()
+        return with(locale.toString()) {
+            when {
+                contains("Hant") -> "zh-Hant"
+                startsWith("zh") || startsWith("yue") -> "zh-Hans"
+                else -> "en"
+            }
+        }
     }
 
     private fun url(relativeUrl: String): String {
         return "$server/$relativeUrl"
     }
 
-    internal fun postRequest(
+    internal fun requestPost(
         relativeUrl: String,
         bodyJson: JSONObject,
         headers: Headers,
@@ -52,12 +55,13 @@ class Pluto {
         val request: Request = Request.Builder()
             .url(url(relativeUrl))
             .headers(headers)
+            .addHeader("Content-Type", "application/json")
             .post(body)
             .build()
         client.newCall(request).enqueue(callback)
     }
 
-    internal fun getRequest(
+    internal fun requestGet(
         relativeUrl: String,
         headers: Headers,
         callback: Callback
@@ -79,6 +83,16 @@ class Pluto {
         client.dispatcher.executorService.shutdown()
         client.connectionPool.evictAll()
         client.cache?.close()
+    }
+
+    init {
+        refreshToken {
+            state = if (it == null) {
+                State.notSignin
+            } else {
+                State.signin
+            }
+        }
     }
 
     companion object {

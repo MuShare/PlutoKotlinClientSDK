@@ -1,10 +1,11 @@
 package com.mushare.plutosdk
 
+import android.util.Log
 import okhttp3.Response
 import org.json.JSONObject
 import java.lang.Exception
 
-class PlutoResponse(response: Response) {
+internal class PlutoResponse(response: Response) {
     private val body = try {
         response.body?.string()?.let { JSONObject(it) }
     } catch (e: Exception) {
@@ -40,7 +41,7 @@ class PlutoResponse(response: Response) {
     }
 }
 
-public enum class PlutoError(val value: Int) {
+enum class PlutoError(val value: Int) {
     unknown(-99999),
     badRequest(-99998),
     parseError(-99997),

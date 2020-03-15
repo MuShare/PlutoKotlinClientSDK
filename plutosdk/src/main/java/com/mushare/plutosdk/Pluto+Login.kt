@@ -19,9 +19,10 @@ fun Pluto.registerByEmail(
     bodyJson.put("mail", address)
     bodyJson.put("password", password)
     bodyJson.put("name", name)
-    postRequest("api/user/register", bodyJson, commonHeaders, object : Callback {
+    requestPost("api/user/register", bodyJson, commonHeaders, object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             e.printStackTrace()
+            error?.let { it(PlutoError.badRequest) }
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -42,9 +43,10 @@ fun Pluto.resendValidationEmail(
 ) {
     val bodyJson = JSONObject()
     bodyJson.put("mail", address)
-    postRequest("api/user/register/verify/mail", bodyJson, commonHeaders, object : Callback {
+    requestPost("api/user/register/verify/mail", bodyJson, commonHeaders, object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             e.printStackTrace()
+            error?.let { it(PlutoError.badRequest) }
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -69,9 +71,10 @@ fun Pluto.loginWithEmail(
     bodyJson.put("password", password)
     bodyJson.put("device_id", data.deviceID)
     bodyJson.put("app_id", appId)
-    postRequest("api/user/login", bodyJson, commonHeaders, object : Callback {
+    requestPost("api/user/login", bodyJson, commonHeaders, object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             e.printStackTrace()
+            error?.let { it(PlutoError.badRequest) }
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -88,9 +91,10 @@ fun Pluto.resetPassword(
 ) {
     val bodyJson = JSONObject()
     bodyJson.put("mail", address)
-    postRequest("api/user/password/reset/mail", bodyJson, commonHeaders, object : Callback {
+    requestPost("api/user/password/reset/mail", bodyJson, commonHeaders, object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             e.printStackTrace()
+            error?.let { it(PlutoError.badRequest) }
         }
 
         override fun onResponse(call: Call, response: Response) {
@@ -109,7 +113,7 @@ fun Pluto.logout() {
     state = Pluto.State.notSignin
 }
 
-fun Pluto.handleLogin(
+private fun Pluto.handleLogin(
     response: PlutoResponse,
     success: (() -> Unit)?,
     error: ((PlutoError) -> Unit)?

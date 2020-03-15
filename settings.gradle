@@ -1,2 +1,3 @@
 rootProject.name='Pluto-Kotlin-SDK'
 include ':plutosdk'
+include ':demoapp'

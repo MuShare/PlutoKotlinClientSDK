@@ -9,9 +9,10 @@ import java.lang.Exception
 public fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = null) {
 
     getHeaders {
-        getRequest("api/user/info/me", it, object : Callback {
+        requestGet("api/user/info/me", it, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
                 e.printStackTrace()
+                error?.let { it(PlutoError.badRequest) }
             }
 
             override fun onResponse(call: Call, response: Response) {

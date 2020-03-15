@@ -3,7 +3,7 @@ package com.mushare.plutosdk
 import android.content.SharedPreferences
 import kotlin.properties.Delegates
 
-class StringWrapper(private val saveKey: String?, private val sharedPref: SharedPreferences) {
+internal class StringWrapper(private val saveKey: String?, private val sharedPref: SharedPreferences) {
     var value: String? by Delegates.observable(sharedPref.getString(saveKey, null)) { _, _, new ->
         with(sharedPref.edit()) {
             putString(saveKey, new)
@@ -12,7 +12,7 @@ class StringWrapper(private val saveKey: String?, private val sharedPref: Shared
     }
 }
 
-class IntWrapper(private val saveKey: String?, private val sharedPref: SharedPreferences) {
+internal class IntWrapper(private val saveKey: String?, private val sharedPref: SharedPreferences) {
     var value: Int? by Delegates.observable(
         if (sharedPref.contains(saveKey)) sharedPref.getInt(
             saveKey,
