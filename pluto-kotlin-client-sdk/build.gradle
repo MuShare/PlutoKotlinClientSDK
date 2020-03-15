@@ -59,8 +59,7 @@ publishing {
     }
     repositories {
         maven {
-            id = 'github'
-            name = 'MuShare Maven Packages'
+            name = 'github'
             url = uri("https://maven.pkg.github.com/MuShare/Pluto-Kotlin-SDK")
         }
     }
