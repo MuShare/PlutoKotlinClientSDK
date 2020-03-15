@@ -18,13 +18,15 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-          settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+      - name: setup-maven-settings
+        uses: s4u/maven-settings-action@v1
+        with:
+          servers: '[{"id": "github", "username": "x-access-token", "password": "${GITHUB_TOKEN}"}]'
 
       # The USERNAME and PASSWORD need to correspond to the credentials environment variables used in
       # the publishing section of your build.gradle
       - name: Publish to GitHub Packages
         run: sudo ./gradlew assembleRelease publish
         env:
-          USERNAME: ${{ github.actor }}
-          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
