@@ -31,4 +31,5 @@ jobs:
           echo "Github username: ${GITHUB_ACTOR}"
           sudo ./gradlew assembleRelease publish --stacktrace
         env:
+          USERNAME: ${GITHUB_ACTOR}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
