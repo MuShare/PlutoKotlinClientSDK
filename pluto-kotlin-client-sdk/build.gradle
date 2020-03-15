@@ -35,10 +35,10 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId "org.mushare"
-            artifactId "plutosdk"
+            artifactId "pluto-kotlin-client-sdk"
             version "0.1"
             artifact sourceJar
-            artifact "$buildDir/outputs/aar/plutosdk-release.aar"
+            artifact "$buildDir/outputs/aar/pluto-kotlin-client-sdk-release.aar"
 
             // include any transitive dependencies
             pom {
