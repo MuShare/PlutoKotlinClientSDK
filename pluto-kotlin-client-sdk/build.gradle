@@ -59,12 +59,9 @@ publishing {
     }
     repositories {
         maven {
-            name = "github"
+            id = 'github'
+            name = 'MuShare Maven Packages'
             url = uri("https://maven.pkg.github.com/MuShare/Pluto-Kotlin-SDK")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-                password = project.findProperty("gpr.token") ?: System.getenv("TOKEN")
-            }
         }
     }
 }
