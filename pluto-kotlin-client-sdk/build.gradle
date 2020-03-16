@@ -33,7 +33,7 @@ task sourceJar(type: Jar) {
 
 publishing {
     publications {
-        maven(MavenPublication) {
+        gpr(MavenPublication) {
             groupId "org.mushare"
             artifactId "pluto-kotlin-client-sdk"
             version "0.1"
