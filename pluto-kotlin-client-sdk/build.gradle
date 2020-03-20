@@ -31,6 +31,9 @@ task sourceJar(type: Jar) {
     archiveClassifier.set("sources")
 }
 
+def githubProperties = new Properties()
+githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
+
 publishing {
     publications {
         gpr(MavenPublication) {
@@ -46,7 +49,7 @@ publishing {
                     def dependenciesNode = asNode().appendNode('dependencies')
 
                     project.configurations.implementation.allDependencies.each {
-                        if (it.group != null || it.name != null || it.version != null || it.name == "unspecified") return
+                        if (it.group == null || it.name == null || it.version == null || it.name == "unspecified") return
 
                         def dependencyNode = dependenciesNode.appendNode('dependency')
                         dependencyNode.appendNode('groupId', it.group)
@@ -62,8 +65,8 @@ publishing {
             name = 'github'
             url = uri("https://maven.pkg.github.com/MuShare/Pluto-Kotlin-SDK")
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("GITHUB_TOKEN")
+                username = githubProperties['gpr.usr'] ?: System.getenv("USERNAME")
+                password = githubProperties['gpr.key'] ?: System.getenv("GITHUB_TOKEN")
             }
         }
     }
