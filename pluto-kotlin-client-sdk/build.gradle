@@ -39,7 +39,7 @@ publishing {
         gpr(MavenPublication) {
             groupId "org.mushare"
             artifactId "pluto-kotlin-client-sdk"
-            version "0.1"
+            version "0.1.1"
             artifact sourceJar
             artifact "$buildDir/outputs/aar/pluto-kotlin-client-sdk-release.aar"
 
@@ -65,8 +65,8 @@ publishing {
             name = 'github'
             url = uri("https://maven.pkg.github.com/MuShare/Pluto-Kotlin-SDK")
             credentials {
-                username = githubProperties['gpr.usr'] ?: System.getenv("USERNAME")
-                password = githubProperties['gpr.key'] ?: System.getenv("GITHUB_TOKEN")
+                username = System.getenv("USERNAME")
+                password = System.getenv("PASSWORD")
             }
         }
     }
