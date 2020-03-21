@@ -31,9 +31,6 @@ task sourceJar(type: Jar) {
     archiveClassifier.set("sources")
 }
 
-def githubProperties = new Properties()
-githubProperties.load(new FileInputStream(rootProject.file("github.properties")))
-
 publishing {
     publications {
         gpr(MavenPublication) {
