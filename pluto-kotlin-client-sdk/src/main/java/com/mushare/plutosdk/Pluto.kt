@@ -86,7 +86,7 @@ class Pluto private constructor() {
     }
 
     init {
-        refreshToken {
+        getToken {
             state = if (it == null) {
                 State.notSignin
             } else {

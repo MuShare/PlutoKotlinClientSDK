@@ -23,7 +23,7 @@ fun Pluto.getToken(completion: (String?) -> Unit) {
     completion(data.jwt)
 }
 
-internal fun Pluto.refreshToken(completion: (String?) -> Unit) {
+private fun Pluto.refreshToken(completion: (String?) -> Unit) {
     val userId = data.userId
     val refreshToken = data.refreshToken
     if (userId == null || refreshToken == null) {
