@@ -50,7 +50,7 @@ internal class PlutoModel(context: Context) {
     var user: PlutoUser?
         get() {
             return if (_userId.value == null || _mail.value == null || _name.value == null || _avatar.value == null) null
-            else PlutoUser(_userId.value!!, _mail.value!!, _name.value!!, _avatar.value!!)
+            else PlutoUser(_userId.value!!, _mail.value!!, _avatar.value!!, _name.value!!)
         }
         set(value) {
             _userId.value = value?.id
