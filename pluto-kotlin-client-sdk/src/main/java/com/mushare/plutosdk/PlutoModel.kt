@@ -81,7 +81,7 @@ internal class PlutoModel(context: Context) {
         _jwt.value = null
         _refreshToken.value = null
         _expire.value = null
-        _userId.value = null
+        user = null
     }
 }
 

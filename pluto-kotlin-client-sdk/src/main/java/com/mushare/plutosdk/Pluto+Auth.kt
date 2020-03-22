@@ -9,9 +9,15 @@ import org.json.JSONObject
 import java.io.IOException
 
 fun Pluto.getToken(completion: (String?) -> Unit) {
+    val jwt = data.jwt
     val expire = data.expire
-    if (expire == null || expire - System.currentTimeMillis() / 1000 < 5 * 60) {
-        refreshToken(completion)
+    if (jwt == null || expire == null || expire - System.currentTimeMillis() / 1000 < 5 * 60) {
+        refreshToken {
+            if (it == null) {
+                data.clear()
+            }
+            completion(it)
+        }
         return
     }
     completion(data.jwt)

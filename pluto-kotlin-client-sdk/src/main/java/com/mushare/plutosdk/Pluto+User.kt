@@ -6,8 +6,11 @@ import okhttp3.Response
 import java.io.IOException
 import java.lang.Exception
 
-public fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = null) {
-
+fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = null) {
+    data.user?.let {
+        success(it)
+        return
+    }
     getHeaders {
         requestGet("api/user/info/me", it, object : Callback {
             override fun onFailure(call: Call, e: IOException) {
