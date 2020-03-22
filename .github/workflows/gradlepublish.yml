@@ -18,7 +18,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-
+      - name: Build
+        run: |
+          sudo ./gradlew assembleRelease --stacktrace
       # The USERNAME and PASSWORD need to correspond to the credentials environment variables used in
       # the publishing section of your build.gradle
       - name: Publish to GitHub Packages
@@ -26,4 +28,4 @@ jobs:
           USERNAME: ${{ secrets.GPR_USERNAME }}
           TOKEN: ${{ secrets.GPR_TOKEN }}
         run: |
-          sudo ./gradlew -Pname="$USERNAME" -Ptoken="$TOKEN" assembleRelease publish --stacktrace
+          sudo ./gradlew -Pname="$USERNAME" -Ptoken="$TOKEN" publish --stacktrace
