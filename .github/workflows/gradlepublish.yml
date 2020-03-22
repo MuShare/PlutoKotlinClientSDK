@@ -22,9 +22,8 @@ jobs:
       # The USERNAME and PASSWORD need to correspond to the credentials environment variables used in
       # the publishing section of your build.gradle
       - name: Publish to GitHub Packages
-        env:
+        with:
           USERNAME: ${{ secrets.GPR_USERNAME }}
           TOKEN: ${{ secrets.GPR_TOKEN }}
         run: |
-          echo "Github username: ${GITHUB_ACTOR}"
           sudo ./gradlew assembleRelease publish --stacktrace
