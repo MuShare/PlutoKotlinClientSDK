@@ -6,6 +6,7 @@ import androidx.core.os.LocaleListCompat
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.properties.Delegates
 
@@ -18,9 +19,11 @@ class Pluto private constructor() {
 
     internal val data by lazy { PlutoModel(context!!) }
 
-    private var stateObserver: ((State) -> Unit)? = null
+    private val stateObserverList = mutableListOf<WeakReference<(State) -> Unit>>()
     internal var state: State by Delegates.observable(State.loading) { _, _, new ->
-        stateObserver?.let { it(new) }
+        for (observer in stateObserverList) {
+            observer.get()?.let { it(new) }
+        }
     }
 
     private val client by lazy { OkHttpClient() }
@@ -73,8 +76,19 @@ class Pluto private constructor() {
         client.newCall(request).enqueue(callback)
     }
 
-    fun observeState(observer: ((State) -> Unit)?) {
-        stateObserver = observer
+    fun addStateObserver(observer: ((State) -> Unit)) {
+        stateObserverList.add(WeakReference(observer))
+    }
+
+    fun removeStateObserver(observer: ((State) -> Unit)) {
+        stateObserverList.removeAll {
+            val o = it.get()
+            o == null || o == observer
+        }
+    }
+
+    fun removeAllStateObserver() {
+        stateObserverList.clear()
     }
 
     fun currentState() = state
@@ -83,6 +97,7 @@ class Pluto private constructor() {
         client.dispatcher.executorService.shutdown()
         client.connectionPool.evictAll()
         client.cache?.close()
+        removeAllStateObserver()
     }
 
     init {
