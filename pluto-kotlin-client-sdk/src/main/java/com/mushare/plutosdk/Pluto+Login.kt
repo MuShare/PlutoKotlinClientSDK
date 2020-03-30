@@ -84,6 +84,28 @@ fun Pluto.loginWithEmail(
     })
 }
 
+fun Pluto.loginWithGoogle(
+    idToken: String,
+    success: (() -> Unit)? = null,
+    error: ((PlutoError) -> Unit)? = null
+) {
+    val bodyJson = JSONObject()
+    bodyJson.put("id_token", idToken)
+    bodyJson.put("device_id", data.deviceID)
+    bodyJson.put("app_id", appId)
+    requestPost("api/user/login/google/mobile", bodyJson, commonHeaders, object : Callback {
+        override fun onFailure(call: Call, e: IOException) {
+            e.printStackTrace()
+            error?.let { it(PlutoError.badRequest) }
+        }
+
+        override fun onResponse(call: Call, response: Response) {
+            val plutoResponse = PlutoResponse(response)
+            handleLogin(plutoResponse, success, error)
+        }
+    })
+}
+
 fun Pluto.resetPassword(
     address: String,
     success: () -> Unit,
