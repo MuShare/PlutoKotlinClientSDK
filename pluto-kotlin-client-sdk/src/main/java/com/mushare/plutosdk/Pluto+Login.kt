@@ -132,7 +132,7 @@ fun Pluto.resetPassword(
 
 fun Pluto.logout() {
     data.clear()
-    state = Pluto.State.notSignin
+    state.postValue(Pluto.State.notSignin)
 }
 
 private fun Pluto.handleLogin(
@@ -154,7 +154,7 @@ private fun Pluto.handleLogin(
             error?.let { it(PlutoError.parseError) }
             return
         }
-        state = Pluto.State.signin
+        state.postValue(Pluto.State.signin)
         success?.let { it() }
     } else {
         error?.let { it(response.errorCode()) }

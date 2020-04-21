@@ -3,12 +3,11 @@ package com.mushare.plutosdk
 import android.content.Context
 import android.util.Log
 import androidx.core.os.LocaleListCompat
+import androidx.lifecycle.MutableLiveData
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.lang.ref.WeakReference
 import java.util.*
-import kotlin.properties.Delegates
 
 class Pluto private constructor() {
     enum class State {
@@ -19,12 +18,7 @@ class Pluto private constructor() {
 
     internal val data by lazy { PlutoModel(context!!) }
 
-    private val stateObserverList = mutableListOf<WeakReference<(State) -> Unit>>()
-    internal var state: State by Delegates.observable(State.loading) { _, _, new ->
-        for (observer in stateObserverList) {
-            observer.get()?.let { it(new) }
-        }
-    }
+    val state: MutableLiveData<State> by lazy { MutableLiveData(State.loading) }
 
     private val client by lazy { OkHttpClient() }
 
@@ -76,43 +70,28 @@ class Pluto private constructor() {
         client.newCall(request).enqueue(callback)
     }
 
-    fun addStateObserver(observer: ((State) -> Unit)) {
-        stateObserverList.add(WeakReference(observer))
-    }
-
-    fun removeStateObserver(observer: ((State) -> Unit)) {
-        stateObserverList.removeAll {
-            val o = it.get()
-            o == null || o == observer
-        }
-    }
-
-    fun removeAllStateObserver() {
-        stateObserverList.clear()
-    }
-
-    fun currentState() = state
-
     private fun destroy() {
         client.dispatcher.executorService.shutdown()
         client.connectionPool.evictAll()
         client.cache?.close()
-        removeAllStateObserver()
     }
 
     init {
         getToken {
-            state = if (it == null) {
-                State.notSignin
-            } else {
-                State.signin
-            }
+            state.postValue(
+                if (it == null) {
+                    State.notSignin
+                } else {
+                    State.signin
+                }
+            )
         }
     }
 
     companion object {
         private const val TAG = "PlutoSDK"
 
+        @Volatile
         private var instance: Pluto? = null
 
         private var server: String? = null
@@ -126,12 +105,14 @@ class Pluto private constructor() {
         }
 
         fun getInstance(): Pluto? {
-            if (context == null || server == null || appId == null) {
-                Log.e(TAG, "Not initialized.")
-                return null
+            return instance ?: synchronized(this) {
+                if (context == null || server == null || appId == null) {
+                    Log.e(TAG, "Not initialized.")
+                    return null
+                }
+                instance = Pluto()
+                return instance
             }
-            if (instance == null) instance = Pluto()
-            return instance
         }
 
         fun destroy() {
