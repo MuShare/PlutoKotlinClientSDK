@@ -1,43 +1,36 @@
 package com.mushare.plutosdk
 
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Response
-import java.io.IOException
-import java.lang.Exception
+import retrofit2.Callback
 
 fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = null) {
     data.user?.let {
         success(it)
         return
     }
-    getHeaders {
-        requestGet("api/user/info/me", it, object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
-                error?.let { it(PlutoError.badRequest) }
-            }
-
-            override fun onResponse(call: Call, response: Response) {
-                val plutoResponse = PlutoResponse(response)
-                if (plutoResponse.statusOK()) {
-                    val body = plutoResponse.getBody()
-                    try {
-                        val user = PlutoUser(
-                            body.getInt("id"),
-                            body.getString("mail"),
-                            body.getString("avatar"),
-                            body.getString("name")
-                        )
-                        data.user = user
-                        success(user)
-                    } catch (e: Exception) {
-                        error?.let { it(PlutoError.parseError) }
+    getAuthorizationHeader { header ->
+        if (header != null) {
+            plutoService.getAccountInfo(header)
+                .enqueue(object : Callback<PlutoResponseWithBody<PlutoUser>> {
+                    override fun onFailure(call: retrofit2.Call<PlutoResponseWithBody<PlutoUser>>, t: Throwable) {
+                        t.printStackTrace()
+                        error?.invoke(PlutoError.badRequest)
                     }
-                } else {
-                    error?.let { it(plutoResponse.errorCode()) }
-                }
-            }
-        })
+
+                    override fun onResponse(call: retrofit2.Call<PlutoResponseWithBody<PlutoUser>>, response: retrofit2.Response<PlutoResponseWithBody<PlutoUser>>) {
+                        val plutoResponse = response.body()
+                        if (plutoResponse != null) {
+                            if (plutoResponse.statusOK()) {
+                                data.user = plutoResponse.getBody().also(success)
+                            } else {
+                                error?.invoke(plutoResponse.errorCode())
+                            }
+                        } else {
+                            error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                        }
+                    }
+                })
+        } else {
+            error?.invoke(PlutoError.notSignin)
+        }
     }
 }

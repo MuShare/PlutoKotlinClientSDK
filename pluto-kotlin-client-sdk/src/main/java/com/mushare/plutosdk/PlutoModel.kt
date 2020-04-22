@@ -2,6 +2,7 @@ package com.mushare.plutosdk
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
 import java.lang.Exception
 import java.util.*
@@ -85,4 +86,9 @@ internal class PlutoModel(context: Context) {
     }
 }
 
-data class PlutoUser(var id: Int, var mail: String, var avatar: String, var name: String)
+data class PlutoUser(
+    @field:SerializedName("id") var id: Int,
+    @field:SerializedName("mail") var mail: String,
+    @field:SerializedName("avatar") var avatar: String,
+    @field:SerializedName("name") var name: String
+)

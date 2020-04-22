@@ -17,12 +17,12 @@ class LoginDataSource {
             //pluto?.registerByEmail(username, password, "Test", {
             //pluto?.resendValidationEmail(username, {
             pluto?.loginWithEmail(username, password, {
-                pluto?.myInfo({
+                pluto.myInfo({
                     val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), it.name)
                     onComplete(Result.Success(fakeUser))
                 }, {
-                    onComplete(Result.Error(IOException("Error logging in $it")))
-                    Log.e("login", "failed $it")
+                    onComplete(Result.Error(IOException("Error getting account info $it")))
+                    Log.e("getInfo", "failed $it")
                 })
             }, {
                 onComplete(Result.Error(IOException("Error logging in $it")))

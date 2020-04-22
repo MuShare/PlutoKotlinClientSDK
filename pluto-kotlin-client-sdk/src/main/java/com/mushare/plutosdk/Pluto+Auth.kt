@@ -1,12 +1,7 @@
 package com.mushare.plutosdk
 
 import com.mushare.plutosdk.Pluto.Companion.appId
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.Headers
-import okhttp3.Response
-import org.json.JSONObject
-import java.io.IOException
+import retrofit2.Callback
 
 fun Pluto.getToken(completion: (String?) -> Unit) {
     val jwt = data.jwt
@@ -26,33 +21,32 @@ fun Pluto.getToken(completion: (String?) -> Unit) {
 private fun Pluto.refreshToken(completion: (String?) -> Unit) {
     val userId = data.userId
     val refreshToken = data.refreshToken
-    if (userId == null || refreshToken == null) {
+    val deviceId = data.deviceID
+    if (userId == null || refreshToken == null || deviceId == null) {
         completion(null)
         return
     }
-    val bodyJson = JSONObject()
-    bodyJson.put("refresh_token", refreshToken)
-    bodyJson.put("user_id", userId)
-    bodyJson.put("device_id", data.deviceID)
-    bodyJson.put("app_id", appId)
-    requestPost("api/auth/refresh", bodyJson, commonHeaders, object : Callback {
-        override fun onFailure(call: Call, e: IOException) {
-            e.printStackTrace()
+    plutoService.refreshAuth(
+        RefreshAuthPostData(refreshToken, userId, deviceId, appId)
+    ).enqueue(object : Callback<PlutoResponseWithBody<RefreshAuthResponse>> {
+        override fun onFailure(
+            call: retrofit2.Call<PlutoResponseWithBody<RefreshAuthResponse>>,
+            t: Throwable
+        ) {
+            t.printStackTrace()
             completion(null)
         }
 
-        override fun onResponse(call: Call, response: Response) {
-            val plutoResponse = PlutoResponse(response)
-            if (plutoResponse.statusOK()) {
-                try {
-                    val jwt = plutoResponse.getBody().getString("jwt")
-                    if (data.updateJwt(jwt)) {
-                        completion(jwt)
-                    } else {
-                        completion(null)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
+        override fun onResponse(
+            call: retrofit2.Call<PlutoResponseWithBody<RefreshAuthResponse>>,
+            response: retrofit2.Response<PlutoResponseWithBody<RefreshAuthResponse>>
+        ) {
+            val plutoResponse = response.body()
+            if (plutoResponse != null && plutoResponse.statusOK()) {
+                val jwt = plutoResponse.getBody().jwt
+                if (data.updateJwt(jwt)) {
+                    completion(jwt)
+                } else {
                     completion(null)
                 }
             } else {
@@ -62,12 +56,12 @@ private fun Pluto.refreshToken(completion: (String?) -> Unit) {
     })
 }
 
-fun Pluto.getHeaders(completion: (Headers) -> Unit) {
+fun Pluto.getAuthorizationHeader(completion: (Map<String, String>?) -> Unit) {
     getToken {
         if (it == null) {
-            completion(commonHeaders)
+            completion(null)
         } else {
-            completion(commonHeaders.newBuilder().add("Authorization", "jwt $it").build())
+            completion(hashMapOf("Authorization" to "jwt $it"))
         }
     }
 }

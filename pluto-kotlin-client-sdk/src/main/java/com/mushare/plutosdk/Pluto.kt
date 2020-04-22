@@ -4,9 +4,11 @@ import android.content.Context
 import android.util.Log
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.MutableLiveData
-import okhttp3.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
 class Pluto private constructor() {
@@ -16,16 +18,23 @@ class Pluto private constructor() {
         signin
     }
 
-    internal val data by lazy { PlutoModel(context!!) }
+    internal val data by lazy { PlutoModel(context) }
 
     val state: MutableLiveData<State> by lazy { MutableLiveData(State.loading) }
 
-    private val client by lazy { OkHttpClient() }
+    internal val gson: Gson by lazy { GsonBuilder().serializeNulls().create() }
+    internal val plutoService: PlutoService by lazy {
+        Retrofit.Builder()
+            .addConverterFactory(
+                GsonConverterFactory.create(gson)
+            )
+            .baseUrl(server)
+            .client(OkHttpClient())
+            .build()
+            .create(PlutoService::class.java)
+    }
 
-    internal val commonHeaders
-        get() = Headers.headersOf("Accept-Language", getLanguage())
-
-    private fun getLanguage(): String {
+    internal fun getLanguage(): String {
         val locale = LocaleListCompat.getDefault()
             .getFirstMatch(arrayOf("zh-Hans", "zh-Hant", "yue-Hans", "yue-Hant", "en"))
             ?: Locale.getDefault()
@@ -36,44 +45,6 @@ class Pluto private constructor() {
                 else -> "en"
             }
         }
-    }
-
-    private fun url(relativeUrl: String): String {
-        return "$server/$relativeUrl"
-    }
-
-    internal fun requestPost(
-        relativeUrl: String,
-        bodyJson: JSONObject,
-        headers: Headers,
-        callback: Callback
-    ) {
-        val body: RequestBody = bodyJson.toString().toRequestBody()
-        val request: Request = Request.Builder()
-            .url(url(relativeUrl))
-            .headers(headers)
-            .addHeader("Content-Type", "application/json")
-            .post(body)
-            .build()
-        client.newCall(request).enqueue(callback)
-    }
-
-    internal fun requestGet(
-        relativeUrl: String,
-        headers: Headers,
-        callback: Callback
-    ) {
-        val request: Request = Request.Builder()
-            .url(url(relativeUrl))
-            .headers(headers)
-            .build()
-        client.newCall(request).enqueue(callback)
-    }
-
-    private fun destroy() {
-        client.dispatcher.executorService.shutdown()
-        client.connectionPool.evictAll()
-        client.cache?.close()
     }
 
     init {
@@ -94,33 +65,26 @@ class Pluto private constructor() {
         @Volatile
         private var instance: Pluto? = null
 
-        private var server: String? = null
-        internal var appId: String? = null
-        internal var context: Context? = null
+        private lateinit var server: String
+        internal lateinit var appId: String
+        internal lateinit var context: Context
+        private var isInitialized: Boolean = false
 
         fun initialize(_context: Context, _server: String, _appId: String) {
             context = _context.applicationContext
             server = _server
             appId = _appId
+            isInitialized = true
         }
 
         fun getInstance(): Pluto? {
             return instance ?: synchronized(this) {
-                if (context == null || server == null || appId == null) {
+                if (!isInitialized) {
                     Log.e(TAG, "Not initialized.")
                     return null
                 }
-                instance = Pluto()
-                return instance
+                return Pluto().also { instance = it }
             }
-        }
-
-        fun destroy() {
-            context = null
-            server = null
-            appId = null
-            instance?.destroy()
-            instance = null
         }
     }
 }

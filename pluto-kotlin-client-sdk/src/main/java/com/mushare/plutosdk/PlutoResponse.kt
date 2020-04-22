@@ -1,44 +1,45 @@
 package com.mushare.plutosdk
 
-import android.util.Log
-import okhttp3.Response
-import org.json.JSONObject
-import java.lang.Exception
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
+import okhttp3.ResponseBody
 
-internal class PlutoResponse(response: Response) {
-    private val body = try {
-        response.body?.string()?.let { JSONObject(it) }
-    } catch (e: Exception) {
-        null
-    }
+class PlutoResponseWithBody<T>(
+    status: String,
+    error: PlutoResponseErrorData,
+    @field:SerializedName("body") private var body: T
+) : PlutoResponse(status, error) {
+    fun getBody(): T = body
+}
 
-    fun statusOK(): Boolean {
-        return try {
-            body?.getString("status") == "ok"
-        } catch (e: Exception) {
-            e.printStackTrace()
-            false
-        }
-    }
+open class PlutoResponse(
+    @field:SerializedName("status") private var status: String,
+    @field:SerializedName("error") private var error: PlutoResponseErrorData
+) {
+    fun statusOK(): Boolean = status == "ok"
+    fun errorCode(): PlutoError =
+        PlutoError.values().find { it.value == error.code } ?: PlutoError.unknown
+}
 
-    fun getBody(): JSONObject {
-        return try {
-            body?.getJSONObject("body") ?: JSONObject()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            JSONObject()
-        }
-    }
+class PlutoResponseErrorData(
+    @field:SerializedName("code") var code: Int = PlutoError.badRequest.value
+)
 
-    fun errorCode(): PlutoError {
-        return try {
-            body?.getJSONObject("error")?.getInt("code")?.let { PlutoError.valueOf(it) }
-                ?: PlutoError.badRequest
-        } catch (e: Exception) {
-            e.printStackTrace()
-            PlutoError.badRequest
-        }
+class RefreshAuthResponse(
+    @field:SerializedName("jwt") var jwt: String
+)
+
+class LoginResponse(
+    @field:SerializedName("refresh_token") var refreshToken: String,
+    @field:SerializedName("jwt") var jwt: String
+)
+
+internal fun parseErrorCodeFromErrorBody(errorBody: ResponseBody?, gson: Gson): PlutoError {
+    if (errorBody == null) {
+        return PlutoError.badRequest
     }
+    val response = gson.fromJson(errorBody.string(), PlutoResponse::class.java)
+    return response?.errorCode() ?: PlutoError.badRequest
 }
 
 enum class PlutoError(val value: Int) {
@@ -53,8 +54,4 @@ enum class PlutoError(val value: Int) {
     invalidPassword(3001),
     invalidRefreshToken(3002),
     invalidJWTToken(3003);
-
-    companion object {
-        fun valueOf(value: Int) = values().find { it.value == value }
-    }
 }
