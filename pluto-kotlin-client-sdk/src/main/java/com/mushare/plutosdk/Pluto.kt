@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
@@ -16,6 +17,21 @@ class Pluto private constructor() {
         notSignin,
         loading,
         signin
+    }
+
+    class PlutoRequestHandler {
+        private var call: Call<out Any>? = null
+        internal fun setCall(call: Call<out Any>?) {
+            this.call = call
+        }
+
+        internal fun setCall(handler: PlutoRequestHandler) {
+            this.call = handler.call
+        }
+
+        fun cancel() {
+            call?.cancel()
+        }
     }
 
     internal val data by lazy { PlutoModel(context) }
