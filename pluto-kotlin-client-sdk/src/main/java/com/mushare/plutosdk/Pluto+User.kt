@@ -3,15 +3,14 @@ package com.mushare.plutosdk
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = null): Pluto.PlutoRequestHandler {
-    val handler = Pluto.PlutoRequestHandler()
+fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
     data.user?.let {
         success(it)
-        return handler
+        return
     }
-    handler.setCall(getAuthorizationHeader { header ->
+    getAuthorizationHeader({ header ->
         if (header != null) {
-            handler.setCall(plutoService.getAccountInfo(header).apply {
+            plutoService.getAccountInfo(header).apply {
                 enqueue(object : Callback<PlutoResponseWithBody<PlutoUser>> {
                     override fun onFailure(call: Call<PlutoResponseWithBody<PlutoUser>>, t: Throwable) {
                         t.printStackTrace()
@@ -31,11 +30,12 @@ fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = 
                         }
                     }
                 })
-            })
+            }.also {
+                handler?.setCall(it)
+            }
         } else {
-            handler.setCall(null)
+            handler?.setCall(null)
             error?.invoke(PlutoError.notSignin)
         }
-    })
-    return handler
+    }, handler)
 }

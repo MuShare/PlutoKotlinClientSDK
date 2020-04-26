@@ -25,10 +25,6 @@ class Pluto private constructor() {
             this.call = call
         }
 
-        internal fun setCall(handler: PlutoRequestHandler) {
-            this.call = handler.call
-        }
-
         fun cancel() {
             call?.cancel()
         }
@@ -64,7 +60,7 @@ class Pluto private constructor() {
     }
 
     init {
-        getToken {
+        getToken({
             state.postValue(
                 if (it == null) {
                     State.notSignin
@@ -72,7 +68,7 @@ class Pluto private constructor() {
                     State.signin
                 }
             )
-        }
+        })
     }
 
     companion object {

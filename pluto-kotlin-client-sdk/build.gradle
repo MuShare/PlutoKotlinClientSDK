@@ -10,8 +10,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 8
-        versionName "0.1.7"
+        versionCode 9
+        versionName "0.1.8"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -36,7 +36,7 @@ publishing {
         gpr(MavenPublication) {
             groupId "org.mushare"
             artifactId "pluto-kotlin-client-sdk"
-            version "0.1.7"
+            version "0.1.8"
             artifact sourceJar
             artifact "$buildDir/outputs/aar/pluto-kotlin-client-sdk-release.aar"
 
