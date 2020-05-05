@@ -3,6 +3,11 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'maven-publish'
 
+buildscript {
+    ext.versionCode = 10
+    ext.versionName = '0.1.9'
+}
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
@@ -10,8 +15,8 @@ android {
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 29
-        versionCode 10
-        versionName "0.1.9"
+        versionCode versionCode
+        versionName versionName
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -36,7 +41,7 @@ publishing {
         gpr(MavenPublication) {
             groupId "org.mushare"
             artifactId "pluto-kotlin-client-sdk"
-            version "0.1.8"
+            version versionName
             artifact sourceJar
             artifact "$buildDir/outputs/aar/pluto-kotlin-client-sdk-release.aar"
 
