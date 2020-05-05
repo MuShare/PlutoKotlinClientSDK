@@ -51,6 +51,7 @@ enum class PlutoError(val value: Int) {
     mailIsNotExsit(2002),
     mailIsNotVerified(2003),
     mailAlreadyVerified(2004),
+    userNameExist(2006),
     invalidPassword(3001),
     invalidRefreshToken(3002),
     invalidJWTToken(3003);
