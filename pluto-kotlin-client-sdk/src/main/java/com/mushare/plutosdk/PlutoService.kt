@@ -5,40 +5,40 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface PlutoService {
-    @POST("api/auth/refresh")
+    @POST("/v1/token/refresh")
     fun refreshAuth(
         @Body body: RefreshAuthPostData
     ): Call<PlutoResponseWithBody<RefreshAuthResponse>>
 
-    @POST("api/user/register")
+    @POST("/v1/user/register")
     fun registerWithEmail(
         @Body body: RegisterWithEmailPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
-    @POST("api/user/register/verify/mail")
+    @POST("/v1/user/register/verify/mail")
     fun resendValidationEmail(
         @Body body: EmailPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
-    @POST("api/user/password/reset/mail")
+    @POST("/v1/user/password/reset/mail")
     fun resetPassword(
         @Body body: EmailPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
-    @POST("api/user/login")
-    fun loginWithEmail(
-        @Body body: LoginWithEmailPostData
+    @POST("/v1/user/login/account")
+    fun loginWithAccount(
+        @Body body: LoginWithAccountPostData
     ): Call<PlutoResponseWithBody<LoginResponse>>
 
-    @POST("api/user/login/google/mobile")
+    @POST("/v1/user/login/google/mobile")
     fun loginWithGoogle(
         @Body body: LoginWithGooglePostData
     ): Call<PlutoResponseWithBody<LoginResponse>>
 
-    @GET("api/user/info/me")
+    @GET("/v1/user/info")
     fun getAccountInfo(
         @HeaderMap authorizationHeader: Map<String, String>
     ): Call<PlutoResponseWithBody<PlutoUser>>
@@ -46,9 +46,7 @@ interface PlutoService {
 
 class RefreshAuthPostData(
     @field:SerializedName("refresh_token") var refreshToken: String,
-    @field:SerializedName("user_id") var userId: Int,
-    @field:SerializedName("device_id") var deviceId: String,
-    @field:SerializedName("app_id") var appId: String
+    @field:SerializedName("user_id") var userId: Int
 )
 
 class RegisterWithEmailPostData(
@@ -61,8 +59,8 @@ class EmailPostData(
     @field:SerializedName("mail") var mail: String
 )
 
-class LoginWithEmailPostData(
-    @field:SerializedName("mail") var mail: String,
+class LoginWithAccountPostData(
+    @field:SerializedName("account") var account: String,
     @field:SerializedName("password") var password: String,
     @field:SerializedName("device_id") var deviceId: String,
     @field:SerializedName("app_id") var appId: String

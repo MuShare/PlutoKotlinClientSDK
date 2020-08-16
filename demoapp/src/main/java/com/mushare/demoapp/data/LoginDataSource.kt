@@ -16,7 +16,7 @@ class LoginDataSource {
             // TODO: handle loggedInUser authentication
             //pluto?.registerByEmail(username, password, "Test", {
             //pluto?.resendValidationEmail(username, {
-            pluto?.loginWithEmail(username, password, {
+            pluto?.loginWithAccount(username, password, {
                 pluto.myInfo({
                     val fakeUser = LoggedInUser(java.util.UUID.randomUUID().toString(), it.name)
                     onComplete(Result.Success(fakeUser))
