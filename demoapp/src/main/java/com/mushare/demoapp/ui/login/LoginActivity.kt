@@ -27,7 +27,11 @@ class LoginActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_login)
 
-        Pluto.initialize(this,"https://staging.easyjapanese-api-gateway.mushare.cn/pluto/","org.mushare.easyjapanese")
+        Pluto.initialize(
+            this,
+            "https://staging.easyjapanese-api-gateway.mushare.cn/pluto-master/",
+            "org.mushare.easyjapanese"
+        )
 
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)

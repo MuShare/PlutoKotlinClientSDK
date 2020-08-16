@@ -145,10 +145,8 @@ fun Pluto.logout() {
 private fun Pluto.handleLogin(response: PlutoResponseWithBody<LoginResponse>, success: (() -> Unit)?, error: ((PlutoError) -> Unit)?) {
     if (response.statusOK()) {
         val body = response.getBody()
-        val refreshToken = body.refreshToken
-        val jwt = body.jwt
-        data.updateRefreshToken(refreshToken)
-        if (!data.updateJwt(jwt)) {
+        data.updateRefreshToken(body.refreshToken)
+        if (!data.updateJwt(body.accessToken)) {
             error?.invoke(PlutoError.parseError)
             return
         }

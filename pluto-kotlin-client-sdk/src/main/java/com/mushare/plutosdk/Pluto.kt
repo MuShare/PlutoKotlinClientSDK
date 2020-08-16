@@ -84,11 +84,7 @@ class Pluto private constructor() {
 
         fun initialize(_context: Context, _server: String, _appId: String) {
             context = _context.applicationContext
-            if (_server.last() == '/') {
-                server = _server.dropLast(1)
-            } else {
-                server = _server
-            }
+            server = _server
             appId = _appId
             isInitialized = true
         }

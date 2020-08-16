@@ -5,40 +5,40 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface PlutoService {
-    @POST("/v1/token/refresh")
+    @POST("v1/token/refresh")
     fun refreshAuth(
         @Body body: RefreshAuthPostData
     ): Call<PlutoResponseWithBody<RefreshAuthResponse>>
 
-    @POST("/v1/user/register")
+    @POST("v1/user/register")
     fun registerWithEmail(
         @Body body: RegisterWithEmailPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
-    @POST("/v1/user/register/verify/mail")
+    @POST("v1/user/register/verify/mail")
     fun resendValidationEmail(
         @Body body: EmailPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
-    @POST("/v1/user/password/reset/mail")
+    @POST("v1/user/password/reset/mail")
     fun resetPassword(
         @Body body: EmailPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
-    @POST("/v1/user/login/account")
+    @POST("v1/user/login/account")
     fun loginWithAccount(
         @Body body: LoginWithAccountPostData
     ): Call<PlutoResponseWithBody<LoginResponse>>
 
-    @POST("/v1/user/login/google/mobile")
+    @POST("v1/user/login/google/mobile")
     fun loginWithGoogle(
         @Body body: LoginWithGooglePostData
     ): Call<PlutoResponseWithBody<LoginResponse>>
 
-    @GET("/v1/user/info")
+    @GET("v1/user/info")
     fun getAccountInfo(
         @HeaderMap authorizationHeader: Map<String, String>
     ): Call<PlutoResponseWithBody<PlutoUser>>
