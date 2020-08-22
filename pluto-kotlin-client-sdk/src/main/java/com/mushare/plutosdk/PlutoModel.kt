@@ -68,8 +68,8 @@ internal class PlutoModel(context: Context) {
         val body = JwtUtils.decodeBody(jwt) ?: return false
         return try {
             val json = JSONObject(body)
-            _userId.value = json.getInt("userId")
-            _expire.value = json.getInt("expire_time")
+            _userId.value = json.getInt("sub")
+            _expire.value = json.getInt("exp")
             _jwt.value = jwt
             true
         } catch (e: Exception) {

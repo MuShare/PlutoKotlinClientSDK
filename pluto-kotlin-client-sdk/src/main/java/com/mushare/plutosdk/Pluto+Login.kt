@@ -57,13 +57,13 @@ fun Pluto.resendValidationEmail(address: String, success: () -> Unit, error: ((P
     }
 }
 
-fun Pluto.loginWithEmail(address: String, password: String, success: (() -> Unit)? = null, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
+fun Pluto.loginWithAccount(address: String, password: String, success: (() -> Unit)? = null, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
     val deviceId = data.deviceID
     if (deviceId == null) {
         error?.invoke(PlutoError.badRequest)
         return
     }
-    plutoService.loginWithEmail(LoginWithEmailPostData(address, password, deviceId, appId)).apply {
+    plutoService.loginWithAccount(LoginWithAccountPostData(address, password, deviceId, appId)).apply {
         enqueue(object : Callback<PlutoResponseWithBody<LoginResponse>> {
             override fun onFailure(call: Call<PlutoResponseWithBody<LoginResponse>>, t: Throwable) {
                 t.printStackTrace()
@@ -145,10 +145,8 @@ fun Pluto.logout() {
 private fun Pluto.handleLogin(response: PlutoResponseWithBody<LoginResponse>, success: (() -> Unit)?, error: ((PlutoError) -> Unit)?) {
     if (response.statusOK()) {
         val body = response.getBody()
-        val refreshToken = body.refreshToken
-        val jwt = body.jwt
-        data.updateRefreshToken(refreshToken)
-        if (!data.updateJwt(jwt)) {
+        data.updateRefreshToken(body.refreshToken)
+        if (!data.updateJwt(body.accessToken)) {
             error?.invoke(PlutoError.parseError)
             return
         }

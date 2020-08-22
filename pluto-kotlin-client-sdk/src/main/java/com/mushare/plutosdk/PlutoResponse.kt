@@ -31,7 +31,7 @@ class RefreshAuthResponse(
 
 class LoginResponse(
     @field:SerializedName("refresh_token") var refreshToken: String,
-    @field:SerializedName("jwt") var jwt: String
+    @field:SerializedName("access_token") var accessToken: String
 )
 
 internal fun parseErrorCodeFromErrorBody(errorBody: ResponseBody?, gson: Gson): PlutoError {

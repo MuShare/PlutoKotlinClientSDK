@@ -1,6 +1,5 @@
 package com.mushare.plutosdk
 
-import com.mushare.plutosdk.Pluto.Companion.appId
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,12 +21,11 @@ fun Pluto.getToken(completion: (String?) -> Unit, handler: Pluto.PlutoRequestHan
 private fun Pluto.refreshToken(completion: (String?) -> Unit, handler: Pluto.PlutoRequestHandler? = null) {
     val userId = data.userId
     val refreshToken = data.refreshToken
-    val deviceId = data.deviceID
-    if (userId == null || refreshToken == null || deviceId == null) {
+    if (userId == null || refreshToken == null) {
         completion(null)
         return
     }
-    plutoService.refreshAuth(RefreshAuthPostData(refreshToken, userId, deviceId, appId)).apply {
+    plutoService.refreshAuth(RefreshAuthPostData(refreshToken, userId)).apply {
         enqueue(object : Callback<PlutoResponseWithBody<RefreshAuthResponse>> {
             override fun onFailure(
                 call: Call<PlutoResponseWithBody<RefreshAuthResponse>>,
