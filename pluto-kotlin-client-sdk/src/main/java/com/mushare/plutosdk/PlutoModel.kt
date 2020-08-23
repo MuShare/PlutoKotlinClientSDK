@@ -44,18 +44,16 @@ internal class PlutoModel(context: Context) {
     private var _userId = IntWrapper(USER_ID_SAVE_KEY, sharedPref)
     val userId get() = _userId.value
 
-    private var _mail = StringWrapper(MAIL_SAVE_KEY, sharedPref)
     private var _name = StringWrapper(NAME_SAVE_KEY, sharedPref)
     private var _avatar = StringWrapper(AVATAR_SAVE_KEY, sharedPref)
 
     var user: PlutoUser?
         get() {
-            return if (_userId.value == null || _mail.value == null || _name.value == null || _avatar.value == null) null
-            else PlutoUser(_userId.value!!, _mail.value!!, _avatar.value!!, _name.value!!)
+            return if (_userId.value == null || _name.value == null || _avatar.value == null) null
+            else PlutoUser(_userId.value!!, _avatar.value!!, _name.value!!)
         }
         set(value) {
             _userId.value = value?.id
-            _mail.value = value?.mail
             _name.value = value?.name
             _avatar.value = value?.avatar
         }
@@ -87,8 +85,7 @@ internal class PlutoModel(context: Context) {
 }
 
 data class PlutoUser(
-    @field:SerializedName("id") var id: Int,
-    @field:SerializedName("mail") var mail: String,
+    @field:SerializedName("sub") var id: Int,
     @field:SerializedName("avatar") var avatar: String,
     @field:SerializedName("name") var name: String
 )

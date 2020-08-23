@@ -4,10 +4,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-fun Pluto.getToken(completion: (String?) -> Unit, handler: Pluto.PlutoRequestHandler? = null) {
+fun Pluto.getToken(isForceRefresh: Boolean = false, completion: (String?) -> Unit, handler: Pluto.PlutoRequestHandler? = null) {
     val jwt = data.jwt
     val expire = data.expire
-    if (jwt == null || expire == null || expire - System.currentTimeMillis() / 1000 < 5 * 60) {
+    if (isForceRefresh || jwt == null || expire == null || expire - System.currentTimeMillis() / 1000 < 5 * 60) {
         refreshToken({
             if (it == null) {
                 data.clear()
@@ -55,11 +55,14 @@ private fun Pluto.refreshToken(completion: (String?) -> Unit, handler: Pluto.Plu
 }
 
 fun Pluto.getAuthorizationHeader(completion: (Map<String, String>?) -> Unit, handler: Pluto.PlutoRequestHandler? = null) {
-    getToken({ token ->
-        if (token == null) {
-            completion(null)
-        } else {
-            completion(hashMapOf("Authorization" to "jwt $token"))
-        }
-    }, handler)
+    getToken(
+        completion = { token ->
+            if (token == null) {
+                completion(null)
+            } else {
+                completion(hashMapOf("Authorization" to "jwt $token"))
+            }
+        },
+        handler = handler
+    )
 }

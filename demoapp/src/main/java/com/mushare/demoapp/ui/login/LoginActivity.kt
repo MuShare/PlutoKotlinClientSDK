@@ -1,6 +1,7 @@
 package com.mushare.demoapp.ui.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -113,6 +114,7 @@ class LoginActivity : AppCompatActivity() {
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
+        startActivity(Intent(this, ProfileActivity::class.java))
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
