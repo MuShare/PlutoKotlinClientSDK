@@ -103,6 +103,10 @@ class LoginActivity : AppCompatActivity() {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
+
+        if (Pluto.getInstance()?.state == Pluto.State.signin) {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {

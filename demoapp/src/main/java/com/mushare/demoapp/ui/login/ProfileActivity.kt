@@ -23,7 +23,7 @@ class ProfileActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.profile_refresh_token).setOnClickListener {
             Pluto.getInstance()?.getToken(isForceRefresh = true, completion = {
-                Toast.makeText(this, it ?: "Refresh failed", 3).show()
+                Toast.makeText(this, it ?: "Refresh failed", Toast.LENGTH_SHORT).show()
             })
         }
     }

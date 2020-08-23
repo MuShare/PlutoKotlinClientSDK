@@ -19,13 +19,12 @@ fun Pluto.getToken(isForceRefresh: Boolean = false, completion: (String?) -> Uni
 }
 
 private fun Pluto.refreshToken(completion: (String?) -> Unit, handler: Pluto.PlutoRequestHandler? = null) {
-    val userId = data.userId
     val refreshToken = data.refreshToken
-    if (userId == null || refreshToken == null) {
+    if (refreshToken == null) {
         completion(null)
         return
     }
-    plutoService.refreshAuth(RefreshAuthPostData(refreshToken, userId)).apply {
+    plutoService.refreshAuth(RefreshAuthPostData(refreshToken, Pluto.appId)).apply {
         enqueue(object : Callback<PlutoResponseWithBody<RefreshAuthResponse>> {
             override fun onFailure(
                 call: Call<PlutoResponseWithBody<RefreshAuthResponse>>,
@@ -38,9 +37,11 @@ private fun Pluto.refreshToken(completion: (String?) -> Unit, handler: Pluto.Plu
             override fun onResponse(call: Call<PlutoResponseWithBody<RefreshAuthResponse>>, response: Response<PlutoResponseWithBody<RefreshAuthResponse>>) {
                 val plutoResponse = response.body()
                 if (plutoResponse != null && plutoResponse.statusOK()) {
-                    val jwt = plutoResponse.getBody().jwt
-                    if (data.updateJwt(jwt)) {
-                        completion(jwt)
+                    val accessToken = plutoResponse.getBody().accessToken
+                    val refreshToken = plutoResponse.getBody().refreshToken
+                    if (data.updateJwt(accessToken)) {
+                        data.updateRefreshToken(refreshToken)
+                        completion(accessToken)
                     } else {
                         completion(null)
                     }

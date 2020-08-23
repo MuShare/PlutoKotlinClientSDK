@@ -46,7 +46,7 @@ interface PlutoService {
 
 class RefreshAuthPostData(
     @field:SerializedName("refresh_token") var refreshToken: String,
-    @field:SerializedName("user_id") var userId: Int
+    @field:SerializedName("app_id") var appId: String
 )
 
 class RegisterWithEmailPostData(
