@@ -1,6 +1,7 @@
 package com.mushare.demoapp.ui.login
 
 import android.app.Activity
+import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
@@ -102,6 +103,10 @@ class LoginActivity : AppCompatActivity() {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
+
+        if (Pluto.getInstance()?.state == Pluto.State.signin) {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
@@ -113,6 +118,10 @@ class LoginActivity : AppCompatActivity() {
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
+
+        val intent = Intent(this, ProfileActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
