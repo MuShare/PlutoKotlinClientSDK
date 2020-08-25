@@ -5,7 +5,7 @@ apply plugin: 'maven-publish'
 
 buildscript {
     ext.versionCode = 11
-    ext.versionName = '0.2'
+    ext.versionName = '0.2.1'
 }
 
 android {
