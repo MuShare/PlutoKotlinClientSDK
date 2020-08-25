@@ -26,7 +26,7 @@ class PlutoResponseErrorData(
 )
 
 class RefreshAuthResponse(
-    @field:SerializedName("jwt") var accessToken: String,
+    @field:SerializedName("access_token") var accessToken: String,
     @field:SerializedName("refresh_token") var refreshToken: String
 )
 

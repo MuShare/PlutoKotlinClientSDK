@@ -118,7 +118,10 @@ class LoginActivity : AppCompatActivity() {
             "$welcome $displayName",
             Toast.LENGTH_LONG
         ).show()
-        startActivity(Intent(this, ProfileActivity::class.java))
+
+        val intent = Intent(this, ProfileActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {
