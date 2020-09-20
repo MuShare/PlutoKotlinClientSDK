@@ -6,7 +6,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 fun Pluto.registerByEmail(address: String, password: String, name: String, success: () -> Unit, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
-    plutoService.registerWithEmail(RegisterWithEmailPostData(address, password, name), getLanguage()).apply {
+    plutoService.registerWithEmail(RegisterWithEmailPostData(address, password, name, appId), getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                 t.printStackTrace()
@@ -32,7 +32,7 @@ fun Pluto.registerByEmail(address: String, password: String, name: String, succe
 }
 
 fun Pluto.resendValidationEmail(address: String, success: () -> Unit, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
-    plutoService.resendValidationEmail(EmailPostData(address), getLanguage()).apply {
+    plutoService.resendValidationEmail(EmailPostData(address, appId), getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                 t.printStackTrace()
@@ -112,7 +112,7 @@ fun Pluto.loginWithGoogle(idToken: String, success: (() -> Unit)? = null, error:
 }
 
 fun Pluto.resetPassword(address: String, success: () -> Unit, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
-    plutoService.resetPassword(EmailPostData(address), getLanguage()).apply {
+    plutoService.resetPassword(EmailPostData(address, appId), getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                 t.printStackTrace()
