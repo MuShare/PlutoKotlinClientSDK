@@ -19,6 +19,7 @@ fun Pluto.registerByEmail(
     bodyJson.put("mail", address)
     bodyJson.put("password", password)
     bodyJson.put("name", name)
+    bodyJson.put("app_id", appId)
     requestPost("api/user/register", bodyJson, commonHeaders, object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             e.printStackTrace()
@@ -43,6 +44,7 @@ fun Pluto.resendValidationEmail(
 ) {
     val bodyJson = JSONObject()
     bodyJson.put("mail", address)
+    bodyJson.put("app_id", appId)
     requestPost("api/user/register/verify/mail", bodyJson, commonHeaders, object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             e.printStackTrace()
@@ -91,6 +93,7 @@ fun Pluto.resetPassword(
 ) {
     val bodyJson = JSONObject()
     bodyJson.put("mail", address)
+    bodyJson.put("app_id", appId)
     requestPost("api/user/password/reset/mail", bodyJson, commonHeaders, object : Callback {
         override fun onFailure(call: Call, e: IOException) {
             e.printStackTrace()
