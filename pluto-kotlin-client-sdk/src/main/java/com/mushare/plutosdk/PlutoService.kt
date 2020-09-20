@@ -52,11 +52,13 @@ class RefreshAuthPostData(
 class RegisterWithEmailPostData(
     @field:SerializedName("mail") var mail: String,
     @field:SerializedName("password") var password: String,
-    @field:SerializedName("name") var name: String
+    @field:SerializedName("name") var name: String,
+    @field:SerializedName("app_id") var appId: String
 )
 
 class EmailPostData(
-    @field:SerializedName("mail") var mail: String
+    @field:SerializedName("mail") var mail: String,
+    @field:SerializedName("app_id") var appId: String
 )
 
 class LoginWithAccountPostData(
