@@ -39,9 +39,15 @@ interface PlutoService {
     ): Call<PlutoResponseWithBody<LoginResponse>>
 
     @GET("v1/user/info")
-    fun getAccountInfo(
+    fun getUserInfo(
         @HeaderMap authorizationHeader: Map<String, String>
     ): Call<PlutoResponseWithBody<PlutoUser>>
+
+    @PUT("v1/user/info")
+    fun updateUserInfo(
+        @Body body: UpdateUserInfoPutData,
+        @HeaderMap authorizationHeader: Map<String, String>
+    ): Call<PlutoResponse>
 }
 
 class RefreshAuthPostData(
@@ -72,4 +78,9 @@ class LoginWithGooglePostData(
     @field:SerializedName("id_token") var idToken: String,
     @field:SerializedName("device_id") var deviceId: String,
     @field:SerializedName("app_id") var appId: String
+)
+
+class UpdateUserInfoPutData(
+    @field:SerializedName("name") var name: String?,
+    @field:SerializedName("avatar") var avatar: String?
 )
