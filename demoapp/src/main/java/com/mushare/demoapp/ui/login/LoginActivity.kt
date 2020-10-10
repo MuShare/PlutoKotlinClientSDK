@@ -30,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
 
         Pluto.initialize(
             this,
-            "https://staging.easyjapanese-api-gateway.mushare.cn/pluto-master/",
+            "https://beta-pluto.kaboocha.com/",
             "org.mushare.easyjapanese"
         )
 
@@ -104,9 +104,14 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        if (Pluto.getInstance()?.state == Pluto.State.signin) {
-            startActivity(Intent(this, ProfileActivity::class.java))
-        }
+        Pluto.getInstance()?.state?.observe(this, Observer {
+            when (it) {
+                Pluto.State.signin -> {
+                    startActivity(Intent(this, ProfileActivity::class.java))
+                }
+            }
+        })
+
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {
