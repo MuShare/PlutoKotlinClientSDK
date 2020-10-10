@@ -5,7 +5,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-fun Pluto.registerByEmail(address: String, password: String, name: String, success: () -> Unit, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
+fun Pluto.registerByEmail(
+    address: String,
+    password: String,
+    name: String,
+    success: () -> Unit,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
     plutoService.registerWithEmail(RegisterWithEmailPostData(address, password, name, appId), getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
@@ -31,7 +38,12 @@ fun Pluto.registerByEmail(address: String, password: String, name: String, succe
     }
 }
 
-fun Pluto.resendValidationEmail(address: String, success: () -> Unit, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
+fun Pluto.resendValidationEmail(
+    address: String,
+    success: () -> Unit,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
     plutoService.resendValidationEmail(EmailPostData(address, appId), getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
@@ -57,7 +69,13 @@ fun Pluto.resendValidationEmail(address: String, success: () -> Unit, error: ((P
     }
 }
 
-fun Pluto.loginWithAccount(address: String, password: String, success: (() -> Unit)? = null, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
+fun Pluto.loginWithAccount(
+    address: String,
+    password: String,
+    success: (() -> Unit)? = null,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
     val deviceId = data.deviceID
     if (deviceId == null) {
         error?.invoke(PlutoError.badRequest)
@@ -84,7 +102,12 @@ fun Pluto.loginWithAccount(address: String, password: String, success: (() -> Un
     }
 }
 
-fun Pluto.loginWithGoogle(idToken: String, success: (() -> Unit)? = null, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
+fun Pluto.loginWithGoogle(
+    idToken: String,
+    success: (() -> Unit)? = null,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
     val deviceId = data.deviceID
     if (deviceId == null) {
         error?.invoke(PlutoError.badRequest)
@@ -111,7 +134,12 @@ fun Pluto.loginWithGoogle(idToken: String, success: (() -> Unit)? = null, error:
     }
 }
 
-fun Pluto.resetPassword(address: String, success: () -> Unit, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
+fun Pluto.resetPassword(
+    address: String,
+    success: () -> Unit,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
     plutoService.resetPassword(EmailPostData(address, appId), getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
@@ -142,7 +170,10 @@ fun Pluto.logout() {
     state.postValue(Pluto.State.notSignin)
 }
 
-private fun Pluto.handleLogin(response: PlutoResponseWithBody<LoginResponse>, success: (() -> Unit)?, error: ((PlutoError) -> Unit)?) {
+private fun Pluto.handleLogin(
+    response: PlutoResponseWithBody<LoginResponse>,
+    success: (() -> Unit)?, error: ((PlutoError) -> Unit)?
+) {
     if (response.statusOK()) {
         val body = response.getBody()
         data.updateRefreshToken(body.refreshToken)
