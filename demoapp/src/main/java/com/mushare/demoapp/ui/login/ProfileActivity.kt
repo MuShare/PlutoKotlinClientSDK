@@ -2,11 +2,9 @@ package com.mushare.demoapp.ui.login;
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.mushare.demoapp.R
 import com.mushare.plutosdk.Pluto
 import com.mushare.plutosdk.getToken
@@ -21,16 +19,21 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private lateinit var nameEditText: WeakReference<EditText>
+    private lateinit var avatarImageView: WeakReference<ImageView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_profile)
 
-        nameEditText = WeakReference(findViewById<EditText>(R.id.profile_name))
+        nameEditText = WeakReference(findViewById(R.id.profile_name))
+        avatarImageView = WeakReference(findViewById(R.id.profile_avatar))
 
-        Pluto.getInstance()?.myInfo(success = {
-            nameEditText.get()?.setText(it.name)
+        Pluto.getInstance()?.myInfo(success = { user ->
+            nameEditText.get()?.setText(user.name)
+            avatarImageView.get()?.let {
+                Glide.with(this).load(user.avatar).into(it)
+            }
         })
 
         Pluto.getInstance()?.getToken(completion = {
