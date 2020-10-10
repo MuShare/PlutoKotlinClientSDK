@@ -36,12 +36,23 @@
         />
 
     <Button
-        android:id="@+id/profile_refresh_token"
+        android:id="@+id/profile_upload_avatar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/profile_update_name"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:text="Upload Avatar"
+        />
+
+    <Button
+        android:id="@+id/profile_refresh_token"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/profile_upload_avatar"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:text="Refresh Token"/>
 

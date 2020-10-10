@@ -1,15 +1,21 @@
 package com.mushare.demoapp.ui.login;
 
+import android.app.Activity
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.github.dhaval2404.imagepicker.ImagePicker
 import com.mushare.demoapp.R
 import com.mushare.plutosdk.Pluto
 import com.mushare.plutosdk.getToken
 import com.mushare.plutosdk.myInfo
 import com.mushare.plutosdk.updateName
+import java.io.ByteArrayOutputStream
 import java.lang.ref.WeakReference
 
 class ProfileActivity : AppCompatActivity() {
@@ -39,6 +45,27 @@ class ProfileActivity : AppCompatActivity() {
         Pluto.getInstance()?.getToken(completion = {
             findViewById<TextView>(R.id.profile_access_token).text = it ?: "Refresh failed"
         })
+
+        findViewById<Button>(R.id.profile_upload_avatar).setOnClickListener {
+            ImagePicker.with(this)
+                .crop()
+                .compress(64)
+                .maxResultSize(480, 480)
+                .start { resultCode, data ->
+                    if (resultCode == Activity.RESULT_OK) {
+                        val filePath = ImagePicker.getFilePath(data) ?: return@start
+                        val bitmap = BitmapFactory.decodeFile(filePath)
+                        val outputStream = ByteArrayOutputStream()
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+                        val base64 = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+                        Log.d(TAG, "base64: $base64")
+                    } else if (resultCode == ImagePicker.RESULT_ERROR) {
+                        Toast.makeText(this, ImagePicker.getError(data), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Task Cancelled", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
 
         findViewById<Button>(R.id.profile_update_name).setOnClickListener {
             val name = nameEditText.get()?.text.toString() ?: return@setOnClickListener
