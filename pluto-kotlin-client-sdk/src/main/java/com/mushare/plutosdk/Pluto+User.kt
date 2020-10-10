@@ -3,7 +3,12 @@ package com.mushare.plutosdk
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = null, handler: Pluto.PlutoRequestHandler? = null) {
+
+fun Pluto.myInfo(
+    success: (PlutoUser) -> Unit,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
     data.user?.let {
         success(it)
         return
@@ -17,7 +22,10 @@ fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = 
                         error?.invoke(PlutoError.badRequest)
                     }
 
-                    override fun onResponse(call: Call<PlutoResponseWithBody<PlutoUser>>, response: Response<PlutoResponseWithBody<PlutoUser>>) {
+                    override fun onResponse(
+                        call: Call<PlutoResponseWithBody<PlutoUser>>,
+                        response: Response<PlutoResponseWithBody<PlutoUser>>
+                    ) {
                         val plutoResponse = response.body()
                         if (plutoResponse != null) {
                             if (plutoResponse.statusOK()) {
@@ -38,4 +46,13 @@ fun Pluto.myInfo(success: (PlutoUser) -> Unit, error: ((PlutoError) -> Unit)? = 
             error?.invoke(PlutoError.notSignin)
         }
     }, handler)
+}
+
+fun Pluto.updateName(
+    name: String,
+    success: () -> Unit,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
+
 }
