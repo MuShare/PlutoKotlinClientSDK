@@ -14,10 +14,6 @@ fun Pluto.myInfo(
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
-    data.user?.let {
-        success(it)
-        return
-    }
     getAuthorizationHeader(
         completion = { header ->
             if (header == null) {
