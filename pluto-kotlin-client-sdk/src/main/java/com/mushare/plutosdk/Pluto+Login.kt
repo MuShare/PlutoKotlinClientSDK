@@ -1,5 +1,6 @@
 package com.mushare.plutosdk
 
+import android.util.Patterns
 import com.mushare.plutosdk.Pluto.Companion.appId
 import retrofit2.Call
 import retrofit2.Callback
@@ -13,7 +14,10 @@ fun Pluto.registerByEmail(
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
-    plutoService.registerWithEmail(RegisterWithEmailPostData(address, password, name, appId), getLanguage()).apply {
+    plutoService.registerWithEmail(
+        RegisterWithEmailPostData(address, password, name, appId),
+        getLanguage()
+    ).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                 t.printStackTrace()
@@ -39,12 +43,17 @@ fun Pluto.registerByEmail(
 }
 
 fun Pluto.resendValidationEmail(
-    address: String,
+    account: String,
     success: () -> Unit,
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
-    plutoService.resendValidationEmail(EmailPostData(address, appId), getLanguage()).apply {
+    var postData =
+        if (Patterns.EMAIL_ADDRESS.matcher(account).matches())
+            ResendValidationEmailPostData(account, null, appId)
+        else
+            ResendValidationEmailPostData(null, account, appId)
+    plutoService.resendValidationEmail(postData, getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                 t.printStackTrace()
@@ -81,25 +90,32 @@ fun Pluto.loginWithAccount(
         error?.invoke(PlutoError.badRequest)
         return
     }
-    plutoService.loginWithAccount(LoginWithAccountPostData(address, password, deviceId, appId)).apply {
-        enqueue(object : Callback<PlutoResponseWithBody<LoginResponse>> {
-            override fun onFailure(call: Call<PlutoResponseWithBody<LoginResponse>>, t: Throwable) {
-                t.printStackTrace()
-                error?.invoke(PlutoError.badRequest)
-            }
-
-            override fun onResponse(call: Call<PlutoResponseWithBody<LoginResponse>>, response: Response<PlutoResponseWithBody<LoginResponse>>) {
-                val plutoResponse = response.body()
-                if (plutoResponse != null) {
-                    handleLogin(plutoResponse, success, error)
-                } else {
-                    error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+    plutoService.loginWithAccount(LoginWithAccountPostData(address, password, deviceId, appId))
+        .apply {
+            enqueue(object : Callback<PlutoResponseWithBody<LoginResponse>> {
+                override fun onFailure(
+                    call: Call<PlutoResponseWithBody<LoginResponse>>,
+                    t: Throwable
+                ) {
+                    t.printStackTrace()
+                    error?.invoke(PlutoError.badRequest)
                 }
-            }
-        })
-    }.also {
-        handler?.setCall(it)
-    }
+
+                override fun onResponse(
+                    call: Call<PlutoResponseWithBody<LoginResponse>>,
+                    response: Response<PlutoResponseWithBody<LoginResponse>>
+                ) {
+                    val plutoResponse = response.body()
+                    if (plutoResponse != null) {
+                        handleLogin(plutoResponse, success, error)
+                    } else {
+                        error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                    }
+                }
+            })
+        }.also {
+            handler?.setCall(it)
+        }
 }
 
 fun Pluto.loginWithGoogle(
@@ -120,7 +136,10 @@ fun Pluto.loginWithGoogle(
                 error?.invoke(PlutoError.badRequest)
             }
 
-            override fun onResponse(call: Call<PlutoResponseWithBody<LoginResponse>>, response: Response<PlutoResponseWithBody<LoginResponse>>) {
+            override fun onResponse(
+                call: Call<PlutoResponseWithBody<LoginResponse>>,
+                response: Response<PlutoResponseWithBody<LoginResponse>>
+            ) {
                 val plutoResponse = response.body()
                 if (plutoResponse != null) {
                     handleLogin(plutoResponse, success, error)

@@ -18,7 +18,7 @@ interface PlutoService {
 
     @POST("v1/user/register/verify/mail")
     fun resendValidationEmail(
-        @Body body: EmailPostData,
+        @Body body: ResendValidationEmailPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
@@ -64,6 +64,12 @@ class RegisterWithEmailPostData(
 
 class EmailPostData(
     @field:SerializedName("mail") var mail: String,
+    @field:SerializedName("app_id") var appId: String
+)
+
+class ResendValidationEmailPostData(
+    @field:SerializedName("mail") var mail: String?,
+    @field:SerializedName("user_id") var userId: String?,
     @field:SerializedName("app_id") var appId: String
 )
 
