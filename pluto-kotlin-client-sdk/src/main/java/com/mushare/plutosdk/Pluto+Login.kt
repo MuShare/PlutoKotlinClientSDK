@@ -53,29 +53,33 @@ fun Pluto.resendValidationEmail(
             ResendValidationEmailPostData(account, null, appId)
         else
             ResendValidationEmailPostData(null, account, appId)
-    plutoService.resendValidationEmail(postData, getLanguage()).apply {
-        enqueue(object : Callback<PlutoResponse> {
-            override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
-                t.printStackTrace()
-                error?.invoke(PlutoError.badRequest)
-            }
-
-            override fun onResponse(call: Call<PlutoResponse>, response: Response<PlutoResponse>) {
-                val plutoResponse = response.body()
-                if (plutoResponse != null) {
-                    if (plutoResponse.statusOK()) {
-                        success()
-                    } else {
-                        error?.invoke(plutoResponse.errorCode())
-                    }
-                } else {
-                    error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+    plutoService.resendValidationEmail(postData, getLanguage())
+        .apply {
+            enqueue(object : Callback<PlutoResponse> {
+                override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
+                    t.printStackTrace()
+                    error?.invoke(PlutoError.badRequest)
                 }
-            }
-        })
-    }.also {
-        handler?.setCall(it)
-    }
+
+                override fun onResponse(
+                    call: Call<PlutoResponse>,
+                    response: Response<PlutoResponse>
+                ) {
+                    val plutoResponse = response.body()
+                    if (plutoResponse != null) {
+                        if (plutoResponse.statusOK()) {
+                            success()
+                        } else {
+                            error?.invoke(plutoResponse.errorCode())
+                        }
+                    } else {
+                        error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                    }
+                }
+            })
+        }.also {
+            handler?.setCall(it)
+        }
 }
 
 fun Pluto.loginWithAccount(
@@ -129,28 +133,32 @@ fun Pluto.loginWithGoogle(
         error?.invoke(PlutoError.badRequest)
         return
     }
-    plutoService.loginWithGoogle(LoginWithGooglePostData(idToken, deviceId, appId)).apply {
-        enqueue(object : Callback<PlutoResponseWithBody<LoginResponse>> {
-            override fun onFailure(call: Call<PlutoResponseWithBody<LoginResponse>>, t: Throwable) {
-                t.printStackTrace()
-                error?.invoke(PlutoError.badRequest)
-            }
-
-            override fun onResponse(
-                call: Call<PlutoResponseWithBody<LoginResponse>>,
-                response: Response<PlutoResponseWithBody<LoginResponse>>
-            ) {
-                val plutoResponse = response.body()
-                if (plutoResponse != null) {
-                    handleLogin(plutoResponse, success, error)
-                } else {
-                    error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+    plutoService.loginWithGoogle(LoginWithGooglePostData(idToken, deviceId, appId))
+        .apply {
+            enqueue(object : Callback<PlutoResponseWithBody<LoginResponse>> {
+                override fun onFailure(
+                    call: Call<PlutoResponseWithBody<LoginResponse>>,
+                    t: Throwable
+                ) {
+                    t.printStackTrace()
+                    error?.invoke(PlutoError.badRequest)
                 }
-            }
-        })
-    }.also {
-        handler?.setCall(it)
-    }
+
+                override fun onResponse(
+                    call: Call<PlutoResponseWithBody<LoginResponse>>,
+                    response: Response<PlutoResponseWithBody<LoginResponse>>
+                ) {
+                    val plutoResponse = response.body()
+                    if (plutoResponse != null) {
+                        handleLogin(plutoResponse, success, error)
+                    } else {
+                        error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                    }
+                }
+            })
+        }.also {
+            handler?.setCall(it)
+        }
 }
 
 fun Pluto.resetPassword(
@@ -159,29 +167,33 @@ fun Pluto.resetPassword(
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
-    plutoService.resetPassword(EmailPostData(address, appId), getLanguage()).apply {
-        enqueue(object : Callback<PlutoResponse> {
-            override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
-                t.printStackTrace()
-                error?.invoke(PlutoError.badRequest)
-            }
-
-            override fun onResponse(call: Call<PlutoResponse>, response: Response<PlutoResponse>) {
-                val plutoResponse = response.body()
-                if (plutoResponse != null) {
-                    if (plutoResponse.statusOK()) {
-                        success()
-                    } else {
-                        error?.invoke(plutoResponse.errorCode())
-                    }
-                } else {
-                    error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+    plutoService.resetPassword(EmailPostData(address, appId), getLanguage())
+        .apply {
+            enqueue(object : Callback<PlutoResponse> {
+                override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
+                    t.printStackTrace()
+                    error?.invoke(PlutoError.badRequest)
                 }
-            }
-        })
-    }.also {
-        handler?.setCall(it)
-    }
+
+                override fun onResponse(
+                    call: Call<PlutoResponse>,
+                    response: Response<PlutoResponse>
+                ) {
+                    val plutoResponse = response.body()
+                    if (plutoResponse != null) {
+                        if (plutoResponse.statusOK()) {
+                            success()
+                        } else {
+                            error?.invoke(plutoResponse.errorCode())
+                        }
+                    } else {
+                        error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                    }
+                }
+            })
+        }.also {
+            handler?.setCall(it)
+        }
 }
 
 fun Pluto.logout() {
