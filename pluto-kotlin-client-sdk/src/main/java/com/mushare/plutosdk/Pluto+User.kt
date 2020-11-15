@@ -61,55 +61,24 @@ fun Pluto.myInfo(
     )
 }
 
+fun Pluto.updateUserId(
+    userId: String,
+    success: () -> Unit,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
+    val postData = UpdateUserInfoPutData(null, null, userId)
+    updateUserInfo(postData, success, error, handler)
+}
+
 fun Pluto.updateName(
     name: String,
     success: () -> Unit,
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
-    getAuthorizationHeader(
-        completion = { header ->
-            if (header == null) {
-                handler?.setCall(null)
-                error?.invoke(PlutoError.notSignin)
-                return@getAuthorizationHeader
-            }
-
-            val body = UpdateUserInfoPutData(name, null)
-            plutoService.updateUserInfo(body, header).apply {
-                enqueue(object : Callback<PlutoResponse> {
-                    override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
-                        t.printStackTrace()
-                        error?.invoke(PlutoError.badRequest)
-                    }
-
-                    override fun onResponse(
-                        call: Call<PlutoResponse>,
-                        response: Response<PlutoResponse>
-                    ) {
-                        val plutoResponse = response.body()
-                        if (plutoResponse != null) {
-                            if (plutoResponse.statusOK()) {
-                                success()
-                            } else {
-                                error?.invoke(plutoResponse.errorCode())
-                            }
-                        } else {
-                            error?.invoke(
-                                parseErrorCodeFromErrorBody(
-                                    response.errorBody(),
-                                    gson
-                                )
-                            )
-                        }
-                    }
-                })
-            }.also {
-                handler?.setCall(it)
-            }
-        },
-        handler = handler
-    )
+    val postData = UpdateUserInfoPutData(name, null, null)
+    updateUserInfo(postData, success, error, handler)
 }
 
 fun Pluto.uploadAvatar(
@@ -122,6 +91,16 @@ fun Pluto.uploadAvatar(
     val outputStream = ByteArrayOutputStream()
     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
     val base64 = Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT)
+    val postData = UpdateUserInfoPutData(null, base64, null)
+    updateUserInfo(postData, success, error, handler)
+}
+
+private fun Pluto.updateUserInfo(
+    postData: UpdateUserInfoPutData,
+    success: () -> Unit,
+    error: ((PlutoError) -> Unit)? = null,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
     getAuthorizationHeader(
         completion = { header ->
             if (header == null) {
@@ -130,8 +109,7 @@ fun Pluto.uploadAvatar(
                 return@getAuthorizationHeader
             }
 
-            val body = UpdateUserInfoPutData(null, base64)
-            plutoService.updateUserInfo(body, header).apply {
+            plutoService.updateUserInfo(postData, header).apply {
                 enqueue(object : Callback<PlutoResponse> {
                     override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                         t.printStackTrace()
@@ -166,5 +144,3 @@ fun Pluto.uploadAvatar(
         handler = handler
     )
 }
-
-

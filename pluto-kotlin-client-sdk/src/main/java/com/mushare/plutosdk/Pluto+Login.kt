@@ -77,7 +77,7 @@ fun Pluto.resendValidationEmail(
 }
 
 fun Pluto.loginWithAccount(
-    address: String,
+    account: String,
     password: String,
     success: (() -> Unit)? = null,
     error: ((PlutoError) -> Unit)? = null,
@@ -88,7 +88,7 @@ fun Pluto.loginWithAccount(
         error?.invoke(PlutoError.badRequest)
         return
     }
-    plutoService.loginWithAccount(LoginWithAccountPostData(address, password, deviceId, appId))
+    plutoService.loginWithAccount(LoginWithAccountPostData(account, password, deviceId, appId))
         .apply {
             enqueue(object : Callback<PlutoResponseWithBody<LoginResponse>> {
                 override fun onFailure(
