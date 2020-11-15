@@ -18,7 +18,7 @@ fun Pluto.myInfo(
         completion = { header ->
             if (header == null) {
                 handler?.setCall(null)
-                error?.invoke(PlutoError.notSignin)
+                error?.invoke(PlutoError.notSignIn)
                 return@getAuthorizationHeader
             }
 
@@ -105,7 +105,7 @@ private fun Pluto.updateUserInfo(
         completion = { header ->
             if (header == null) {
                 handler?.setCall(null)
-                error?.invoke(PlutoError.notSignin)
+                error?.invoke(PlutoError.notSignIn)
                 return@getAuthorizationHeader
             }
 
