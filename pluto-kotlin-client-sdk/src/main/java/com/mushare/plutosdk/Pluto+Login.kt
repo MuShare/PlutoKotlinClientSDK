@@ -1,5 +1,6 @@
 package com.mushare.plutosdk
 
+import android.util.Patterns
 import com.mushare.plutosdk.Pluto.Companion.appId
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,7 +48,7 @@ fun Pluto.resendValidationEmail(
     handler: Pluto.PlutoRequestHandler? = null
 ) {
     val postData =
-        if (account.contains("@"))
+        if (Patterns.EMAIL_ADDRESS.matcher(account).matches())
             ResendValidationEmailPostData(null, account, appId)
         else
             ResendValidationEmailPostData(account, null, appId)
