@@ -41,12 +41,17 @@ fun Pluto.register(
 }
 
 fun Pluto.resendValidationEmail(
-    address: String,
+    account: String,
     success: () -> Unit,
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
-    plutoService.resendValidationEmail(EmailPostData(address, appId), getLanguage()).apply {
+    val postData =
+        if (account.contains("@"))
+            ResendValidationEmailPostData(null, account, appId)
+        else
+            ResendValidationEmailPostData(account, null, appId)
+    plutoService.resendValidationEmail(postData, getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                 t.printStackTrace()
@@ -107,8 +112,8 @@ fun Pluto.loginWithAccount(
                 }
             })
         }.also {
-        handler?.setCall(it)
-    }
+            handler?.setCall(it)
+        }
 }
 
 fun Pluto.loginWithGoogle(
