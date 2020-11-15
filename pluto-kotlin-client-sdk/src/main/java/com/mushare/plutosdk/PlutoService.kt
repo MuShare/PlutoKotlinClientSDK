@@ -11,14 +11,14 @@ interface PlutoService {
     ): Call<PlutoResponseWithBody<RefreshAuthResponse>>
 
     @POST("v1/user/register")
-    fun registerWithEmail(
-        @Body body: RegisterWithEmailPostData,
+    fun register(
+        @Body body: RegisterPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
     @POST("v1/user/register/verify/mail")
     fun resendValidationEmail(
-        @Body body: EmailPostData,
+        @Body body: ResendValidationEmailPostData,
         @Header("Accept-Language") language: String
     ): Call<PlutoResponse>
 
@@ -55,10 +55,17 @@ class RefreshAuthPostData(
     @field:SerializedName("app_id") var appId: String
 )
 
-class RegisterWithEmailPostData(
+class RegisterPostData(
+    @field:SerializedName("user_id") var userId: String,
     @field:SerializedName("mail") var mail: String,
     @field:SerializedName("password") var password: String,
     @field:SerializedName("name") var name: String,
+    @field:SerializedName("app_id") var appId: String
+)
+
+class ResendValidationEmailPostData(
+    @field:SerializedName("user_id") var userId: String?,
+    @field:SerializedName("mail") var mail: String?,
     @field:SerializedName("app_id") var appId: String
 )
 
@@ -82,5 +89,6 @@ class LoginWithGooglePostData(
 
 class UpdateUserInfoPutData(
     @field:SerializedName("name") var name: String?,
-    @field:SerializedName("avatar") var avatar: String?
+    @field:SerializedName("avatar") var avatar: String?,
+    @field:SerializedName("avatar") var userId: String?
 )
