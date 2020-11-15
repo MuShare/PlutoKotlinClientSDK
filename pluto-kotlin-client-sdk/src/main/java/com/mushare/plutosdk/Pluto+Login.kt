@@ -5,15 +5,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-fun Pluto.registerByEmail(
-    address: String,
+fun Pluto.register(
+    userId: String,
+    mail: String,
     password: String,
     name: String,
     success: () -> Unit,
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
-    plutoService.registerWithEmail(RegisterWithEmailPostData(address, password, name, appId), getLanguage()).apply {
+    val postData = RegisterPostData(userId, mail, password, name, appId)
+    plutoService.register(postData, getLanguage()).apply {
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                 t.printStackTrace()
@@ -81,23 +83,30 @@ fun Pluto.loginWithAccount(
         error?.invoke(PlutoError.badRequest)
         return
     }
-    plutoService.loginWithAccount(LoginWithAccountPostData(address, password, deviceId, appId)).apply {
-        enqueue(object : Callback<PlutoResponseWithBody<LoginResponse>> {
-            override fun onFailure(call: Call<PlutoResponseWithBody<LoginResponse>>, t: Throwable) {
-                t.printStackTrace()
-                error?.invoke(PlutoError.badRequest)
-            }
-
-            override fun onResponse(call: Call<PlutoResponseWithBody<LoginResponse>>, response: Response<PlutoResponseWithBody<LoginResponse>>) {
-                val plutoResponse = response.body()
-                if (plutoResponse != null) {
-                    handleLogin(plutoResponse, success, error)
-                } else {
-                    error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+    plutoService.loginWithAccount(LoginWithAccountPostData(address, password, deviceId, appId))
+        .apply {
+            enqueue(object : Callback<PlutoResponseWithBody<LoginResponse>> {
+                override fun onFailure(
+                    call: Call<PlutoResponseWithBody<LoginResponse>>,
+                    t: Throwable
+                ) {
+                    t.printStackTrace()
+                    error?.invoke(PlutoError.badRequest)
                 }
-            }
-        })
-    }.also {
+
+                override fun onResponse(
+                    call: Call<PlutoResponseWithBody<LoginResponse>>,
+                    response: Response<PlutoResponseWithBody<LoginResponse>>
+                ) {
+                    val plutoResponse = response.body()
+                    if (plutoResponse != null) {
+                        handleLogin(plutoResponse, success, error)
+                    } else {
+                        error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                    }
+                }
+            })
+        }.also {
         handler?.setCall(it)
     }
 }
@@ -120,7 +129,10 @@ fun Pluto.loginWithGoogle(
                 error?.invoke(PlutoError.badRequest)
             }
 
-            override fun onResponse(call: Call<PlutoResponseWithBody<LoginResponse>>, response: Response<PlutoResponseWithBody<LoginResponse>>) {
+            override fun onResponse(
+                call: Call<PlutoResponseWithBody<LoginResponse>>,
+                response: Response<PlutoResponseWithBody<LoginResponse>>
+            ) {
                 val plutoResponse = response.body()
                 if (plutoResponse != null) {
                     handleLogin(plutoResponse, success, error)
