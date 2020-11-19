@@ -30,7 +30,7 @@ class ProfileActivity : AppCompatActivity() {
 
         updateUserInfo()
 
-        Pluto.getInstance()?.getToken(completion = {
+        Pluto.getInstance()?.getAccessToken(completion = {
             findViewById<TextView>(R.id.profile_access_token).text = it ?: "Refresh failed"
         })
 
@@ -90,7 +90,7 @@ class ProfileActivity : AppCompatActivity() {
         }
 
         findViewById<Button>(R.id.profile_refresh_token).setOnClickListener {
-            Pluto.getInstance()?.getToken(isForceRefresh = true, completion = {
+            Pluto.getInstance()?.getAccessToken(isForceRefresh = true, completion = {
                 findViewById<TextView>(R.id.profile_access_token).text = it ?: "Refresh failed"
             })
         }

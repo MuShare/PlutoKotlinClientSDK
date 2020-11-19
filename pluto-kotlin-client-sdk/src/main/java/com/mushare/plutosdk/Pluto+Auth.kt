@@ -4,10 +4,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-fun Pluto.getToken(isForceRefresh: Boolean = false, completion: (String?) -> Unit, handler: Pluto.PlutoRequestHandler? = null) {
-    val jwt = data.jwt
+fun Pluto.getAccessToken(
+    isForceRefresh: Boolean = false,
+    completion: (String?) -> Unit,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
+    val accessToken = data.accessToken
     val expire = data.expire
-    if (isForceRefresh || jwt == null || expire == null || expire - System.currentTimeMillis() / 1000 < 5 * 60) {
+    if (isForceRefresh || accessToken == null || expire == null || expire - System.currentTimeMillis() / 1000 < 5 * 60) {
         refreshToken({
             if (it == null) {
                 data.clear()
@@ -15,10 +19,13 @@ fun Pluto.getToken(isForceRefresh: Boolean = false, completion: (String?) -> Uni
             completion(it)
         }, handler)
     }
-    completion(data.jwt)
+    completion(data.accessToken)
 }
 
-private fun Pluto.refreshToken(completion: (String?) -> Unit, handler: Pluto.PlutoRequestHandler? = null) {
+private fun Pluto.refreshToken(
+    completion: (String?) -> Unit,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
     val refreshToken = data.refreshToken
     if (refreshToken == null) {
         completion(null)
@@ -34,13 +41,16 @@ private fun Pluto.refreshToken(completion: (String?) -> Unit, handler: Pluto.Plu
                 completion(null)
             }
 
-            override fun onResponse(call: Call<PlutoResponseWithBody<RefreshAuthResponse>>, response: Response<PlutoResponseWithBody<RefreshAuthResponse>>) {
+            override fun onResponse(
+                call: Call<PlutoResponseWithBody<RefreshAuthResponse>>,
+                response: Response<PlutoResponseWithBody<RefreshAuthResponse>>
+            ) {
                 val plutoResponse = response.body()
                 if (plutoResponse != null && plutoResponse.statusOK()) {
                     val accessToken = plutoResponse.getBody().accessToken
                     val refreshToken = plutoResponse.getBody().refreshToken
-                    if (data.updateJwt(accessToken)) {
-                        data.updateRefreshToken(refreshToken)
+                    if (data.updateAccessToken(accessToken)) {
+                        data.refreshToken = refreshToken
                         completion(accessToken)
                     } else {
                         completion(null)
@@ -55,8 +65,11 @@ private fun Pluto.refreshToken(completion: (String?) -> Unit, handler: Pluto.Plu
     }
 }
 
-fun Pluto.getAuthorizationHeader(completion: (Map<String, String>?) -> Unit, handler: Pluto.PlutoRequestHandler? = null) {
-    getToken(
+fun Pluto.getAuthorizationHeader(
+    completion: (Map<String, String>?) -> Unit,
+    handler: Pluto.PlutoRequestHandler? = null
+) {
+    getAccessToken(
         completion = { token ->
             if (token == null) {
                 completion(null)

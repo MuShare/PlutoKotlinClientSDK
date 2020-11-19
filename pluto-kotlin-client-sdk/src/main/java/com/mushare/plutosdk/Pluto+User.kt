@@ -23,9 +23,9 @@ fun Pluto.myInfo(
             }
 
             plutoService.getUserInfo(header).apply {
-                enqueue(object : Callback<PlutoResponseWithBody<PlutoUser>> {
+                enqueue(object : Callback<PlutoResponseWithBody<String>> {
                     override fun onFailure(
-                        call: Call<PlutoResponseWithBody<PlutoUser>>,
+                        call: Call<PlutoResponseWithBody<String>>,
                         t: Throwable
                     ) {
                         t.printStackTrace()
@@ -33,13 +33,13 @@ fun Pluto.myInfo(
                     }
 
                     override fun onResponse(
-                        call: Call<PlutoResponseWithBody<PlutoUser>>,
-                        response: Response<PlutoResponseWithBody<PlutoUser>>
+                        call: Call<PlutoResponseWithBody<String>>,
+                        response: Response<PlutoResponseWithBody<String>>
                     ) {
                         val plutoResponse = response.body()
                         if (plutoResponse != null) {
                             if (plutoResponse.statusOK()) {
-                                data.user = plutoResponse.getBody().also(success)
+                                data.infoJSONString = plutoResponse.getBody()
                             } else {
                                 error?.invoke(plutoResponse.errorCode())
                             }
