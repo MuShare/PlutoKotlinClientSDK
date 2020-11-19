@@ -32,7 +32,9 @@ class Pluto private constructor() {
 
     internal val data by lazy { PlutoModel(context) }
 
-    val state: MutableLiveData<State> by lazy { MutableLiveData(State.loading) }
+    val state: MutableLiveData<State> by lazy {
+        MutableLiveData(if (data.isTokenNull) State.notSignin else State.signin)
+    }
 
     internal val gson: Gson by lazy { GsonBuilder().serializeNulls().create() }
     internal val plutoService: PlutoService by lazy {
