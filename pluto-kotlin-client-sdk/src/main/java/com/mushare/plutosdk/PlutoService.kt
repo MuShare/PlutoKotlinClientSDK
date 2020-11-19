@@ -90,5 +90,5 @@ class LoginWithGooglePostData(
 class UpdateUserInfoPutData(
     @field:SerializedName("name") var name: String?,
     @field:SerializedName("avatar") var avatar: String?,
-    @field:SerializedName("avatar") var userId: String?
+    @field:SerializedName("user_id") var userId: String?
 )

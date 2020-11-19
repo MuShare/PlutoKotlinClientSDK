@@ -60,7 +60,7 @@ class Pluto private constructor() {
     }
 
     init {
-        getToken(completion = {
+        getAccessToken(completion = {
             state.postValue(
                 if (it == null) {
                     State.notSignin

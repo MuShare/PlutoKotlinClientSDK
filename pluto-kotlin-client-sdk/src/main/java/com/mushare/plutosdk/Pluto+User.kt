@@ -39,7 +39,8 @@ fun Pluto.myInfo(
                         val plutoResponse = response.body()
                         if (plutoResponse != null) {
                             if (plutoResponse.statusOK()) {
-                                data.user = plutoResponse.getBody().also(success)
+                                data.user = plutoResponse.getBody()
+                                success(plutoResponse.getBody())
                             } else {
                                 error?.invoke(plutoResponse.errorCode())
                             }

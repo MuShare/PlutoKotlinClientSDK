@@ -18,6 +18,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private lateinit var nameEditText: WeakReference<EditText>
+    private lateinit var userIdEditText: WeakReference<EditText>
     private lateinit var avatarImageView: WeakReference<ImageView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,11 +27,12 @@ class ProfileActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile)
 
         nameEditText = WeakReference(findViewById(R.id.profile_name))
+        userIdEditText = WeakReference(findViewById(R.id.profile_user_id))
         avatarImageView = WeakReference(findViewById(R.id.profile_avatar))
 
         updateUserInfo()
 
-        Pluto.getInstance()?.getToken(completion = {
+        Pluto.getInstance()?.getAccessToken(completion = {
             findViewById<TextView>(R.id.profile_access_token).text = it ?: "Refresh failed"
         })
 
@@ -84,13 +86,28 @@ class ProfileActivity : AppCompatActivity() {
                     }
                 },
                 error = {
-                    Log.d(TAG, "Error updating username $it")
+                    Toast.makeText(this, "Error updating username $it", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+
+        findViewById<Button>(R.id.profile_update_user_id).setOnClickListener {
+            val userId = userIdEditText.get()?.text.toString() ?: return@setOnClickListener
+            Pluto.getInstance()?.updateUserId(
+                userId = userId,
+                success = {
+                    updateUserInfo {
+                        Toast.makeText(this, "User ID updated", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                error = {
+                    Toast.makeText(this, "Error updating userId $it", Toast.LENGTH_SHORT).show()
                 }
             )
         }
 
         findViewById<Button>(R.id.profile_refresh_token).setOnClickListener {
-            Pluto.getInstance()?.getToken(isForceRefresh = true, completion = {
+            Pluto.getInstance()?.getAccessToken(isForceRefresh = true, completion = {
                 findViewById<TextView>(R.id.profile_access_token).text = it ?: "Refresh failed"
             })
         }
@@ -99,6 +116,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun updateUserInfo(completion: (() -> Unit)? = null) {
         Pluto.getInstance()?.myInfo(success = { user ->
             nameEditText.get()?.setText(user.name)
+            userIdEditText.get()?.setText(user.userId)
             avatarImageView.get()?.let {
                 Glide.with(this).load(user.avatar).into(it)
             }

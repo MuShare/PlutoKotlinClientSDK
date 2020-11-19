@@ -194,8 +194,8 @@ private fun Pluto.handleLogin(
 ) {
     if (response.statusOK()) {
         val body = response.getBody()
-        data.updateRefreshToken(body.refreshToken)
-        if (!data.updateJwt(body.accessToken)) {
+        data.refreshToken = body.refreshToken
+        if (!data.updateAccessToken(body.accessToken)) {
             error?.invoke(PlutoError.parseError)
             return
         }

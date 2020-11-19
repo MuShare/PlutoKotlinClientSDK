@@ -2,22 +2,15 @@ package com.mushare.plutosdk
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
-import java.lang.Exception
 import java.util.*
 
 const val SHARED_PREFERENCES_NAME = "PlutoSharedPrefs"
 
 // Save key
 const val UUID_SAVE_KEY = "uuid"
-const val JWT_SAVE_KEY = "jwt"
-const val REFRESH_TOKEN_SAVE_KEY = "refresh"
-const val EXPIRE_SAVE_KEY = "expire"
-const val USER_ID_SAVE_KEY = "userId"
-const val MAIL_SAVE_KEY = "mail"
-const val NAME_SAVE_KEY = "name"
-const val AVATAR_SAVE_KEY = "avatar"
 
 internal class PlutoModel(context: Context) {
     private val sharedPref: SharedPreferences =
@@ -35,40 +28,62 @@ internal class PlutoModel(context: Context) {
         uuid
     }
 
-    private var _jwt = StringWrapper(JWT_SAVE_KEY, sharedPref)
-    val jwt get() = _jwt.value
-    private var _refreshToken = StringWrapper(REFRESH_TOKEN_SAVE_KEY, sharedPref)
-    val refreshToken get() = _refreshToken.value
-    private var _expire = IntWrapper(EXPIRE_SAVE_KEY, sharedPref)
-    val expire get() = _expire.value
-    private var _userId = IntWrapper(USER_ID_SAVE_KEY, sharedPref)
-    val userId get() = _userId.value
+    private val accessTokenWrapper = StringWrapper("jwt", sharedPref)
+    private val refreshTokenWrapper = StringWrapper("refresh", sharedPref)
+    private val expireWrapper = IntWrapper("expire", sharedPref)
+    private val subWrapper = IntWrapper("userId", sharedPref)
+    private val infoJSONStringWrapper = StringWrapper("infoJSONString", sharedPref)
 
-    private var _name = StringWrapper(NAME_SAVE_KEY, sharedPref)
-    private var _avatar = StringWrapper(AVATAR_SAVE_KEY, sharedPref)
+    var accessToken: String?
+        get() = accessTokenWrapper.value
+        set(value) {
+            accessTokenWrapper.value = value
+        }
+
+    var refreshToken: String?
+        get() = refreshTokenWrapper.value
+        set(value) {
+            refreshTokenWrapper.value = value
+        }
+
+    var expire: Int?
+        get() = expireWrapper.value
+        set(value) {
+            expireWrapper.value = value
+        }
+
+    var sub: Int?
+        get() = subWrapper.value
+        set(value) {
+            subWrapper.value = value
+        }
+
+    private var infoJSONString: String?
+        get() = infoJSONStringWrapper.value
+        set(value) {
+            infoJSONStringWrapper.value = value
+        }
+
+    private val gson = Gson()
 
     var user: PlutoUser?
         get() {
-            return if (_userId.value == null || _name.value == null || _avatar.value == null) null
-            else PlutoUser(_userId.value!!, _avatar.value!!, _name.value!!)
+            if (infoJSONString == null) {
+                return null
+            }
+            return gson.fromJson(infoJSONString, PlutoUser::class.java)
         }
         set(value) {
-            _userId.value = value?.id
-            _name.value = value?.name
-            _avatar.value = value?.avatar
+            infoJSONString = gson.toJson(value)
         }
 
-    fun updateRefreshToken(refreshToken: String) {
-        _refreshToken.value = refreshToken
-    }
-
-    fun updateJwt(jwt: String): Boolean {
+    fun updateAccessToken(jwt: String): Boolean {
         val body = JwtUtils.decodeBody(jwt) ?: return false
         return try {
             val json = JSONObject(body)
-            _userId.value = json.getInt("sub")
-            _expire.value = json.getInt("exp")
-            _jwt.value = jwt
+            sub = json.getInt("sub")
+            expire = json.getInt("exp")
+            accessToken = jwt
             true
         } catch (e: Exception) {
             e.printStackTrace()
@@ -77,15 +92,18 @@ internal class PlutoModel(context: Context) {
     }
 
     fun clear() {
-        _jwt.value = null
-        _refreshToken.value = null
-        _expire.value = null
-        user = null
+        accessToken = null
+        refreshToken = null
+        expire = 0
+        sub = null
+        infoJSONString = null
     }
 }
 
 data class PlutoUser(
     @field:SerializedName("sub") var id: Int,
+    @field:SerializedName("user_id") var userId: String,
+    @field:SerializedName("user_id_updated") var userIdUpdated: Boolean,
     @field:SerializedName("avatar") var avatar: String,
     @field:SerializedName("name") var name: String
 )
