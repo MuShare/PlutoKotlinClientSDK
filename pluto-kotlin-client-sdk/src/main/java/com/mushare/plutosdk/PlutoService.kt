@@ -41,7 +41,7 @@ interface PlutoService {
     @GET("v1/user/info")
     fun getUserInfo(
         @HeaderMap authorizationHeader: Map<String, String>
-    ): Call<PlutoResponseWithBody<String>>
+    ): Call<PlutoResponseWithBody<PlutoUser>>
 
     @PUT("v1/user/info")
     fun updateUserInfo(

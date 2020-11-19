@@ -2,9 +2,9 @@ package com.mushare.plutosdk
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
-import java.lang.Exception
 import java.util.*
 
 const val SHARED_PREFERENCES_NAME = "PlutoSharedPrefs"
@@ -58,26 +58,23 @@ internal class PlutoModel(context: Context) {
             subWrapper.value = value
         }
 
-    var infoJSONString: String?
+    private var infoJSONString: String?
         get() = infoJSONStringWrapper.value
         set(value) {
             infoJSONStringWrapper.value = value
         }
 
-    val user: PlutoUser?
+    private val gson = Gson()
+
+    var user: PlutoUser?
         get() {
             if (infoJSONString == null) {
                 return null
             }
-            val info = JSONObject(infoJSONString)
-            return PlutoUser(
-                id = info.getInt("sub"),
-                userId = info.getString("user_id"),
-                userIdUpdated = info.getBoolean("user_id_updated"),
-                avatar = info.getString("avatar"),
-                name = info.getString("name")
-                // TODO: bindings
-            )
+            return gson.fromJson(infoJSONString, PlutoUser::class.java)
+        }
+        set(value) {
+            infoJSONString = gson.toJson(value)
         }
 
     fun updateAccessToken(jwt: String): Boolean {
