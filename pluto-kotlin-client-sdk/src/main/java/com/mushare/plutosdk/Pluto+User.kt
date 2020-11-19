@@ -9,11 +9,25 @@ import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 
+val Pluto.currentUser: PlutoUser?
+    get() {
+        if (state != Pluto.State.signin) {
+            return null
+        }
+        return data.user
+    }
+
 fun Pluto.myInfo(
+    isForceRefresh: Boolean = false,
     success: (PlutoUser) -> Unit,
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
+    val currentUser = data.user
+    if (!isForceRefresh && currentUser != null) {
+        success(currentUser)
+        return
+    }
     getAuthorizationHeader(
         completion = { header ->
             if (header == null) {

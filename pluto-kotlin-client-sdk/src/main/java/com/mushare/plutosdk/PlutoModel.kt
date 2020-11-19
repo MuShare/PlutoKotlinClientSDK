@@ -77,6 +77,9 @@ internal class PlutoModel(context: Context) {
             infoJSONString = gson.toJson(value)
         }
 
+    val isTokenNull: Boolean
+        get() = accessToken == null || refreshToken == null
+
     fun updateAccessToken(jwt: String): Boolean {
         val body = JwtUtils.decodeBody(jwt) ?: return false
         return try {
