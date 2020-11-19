@@ -86,7 +86,22 @@ class ProfileActivity : AppCompatActivity() {
                     }
                 },
                 error = {
-                    Log.d(TAG, "Error updating username $it")
+                    Toast.makeText(this, "Error updating username $it", Toast.LENGTH_SHORT).show()
+                }
+            )
+        }
+
+        findViewById<Button>(R.id.profile_update_user_id).setOnClickListener {
+            val userId = userIdEditText.get()?.text.toString() ?: return@setOnClickListener
+            Pluto.getInstance()?.updateUserId(
+                userId = userId,
+                success = {
+                    updateUserInfo {
+                        Toast.makeText(this, "User ID updated", Toast.LENGTH_SHORT).show()
+                    }
+                },
+                error = {
+                    Toast.makeText(this, "Error updating userId $it", Toast.LENGTH_SHORT).show()
                 }
             )
         }
