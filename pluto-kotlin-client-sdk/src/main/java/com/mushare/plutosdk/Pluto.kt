@@ -30,6 +30,20 @@ class Pluto private constructor() {
         }
     }
 
+    enum class LoginType(val identifier: String) {
+        mail("mail"),
+        google("google");
+        // TODO: wechat
+
+        companion object {
+            private val map = values().associateBy(LoginType::identifier)
+
+            fun from(identifier: String): LoginType? {
+                return map.getValue(identifier)
+            }
+        }
+    }
+
     internal val data by lazy { PlutoModel(context) }
 
     val state: MutableLiveData<State> by lazy { MutableLiveData(State.loading) }
