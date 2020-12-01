@@ -1,5 +1,11 @@
 package com.mushare.plutosdk
 
+val availableLoginTypes: Array<Pluto.LoginType>
+    get() = arrayOf(Pluto.LoginType.mail, Pluto.LoginType.mail)
+
+val Pluto.availableBindings: Array<PlutoUserBinding>?
+    get() = data.user?.bindings
+
 fun Pluto.bind(
     type: Pluto.LoginType,
     authString: String,

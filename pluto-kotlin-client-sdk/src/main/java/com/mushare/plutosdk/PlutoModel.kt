@@ -106,7 +106,7 @@ data class PlutoUser(
     @field:SerializedName("user_id_updated") var userIdUpdated: Boolean,
     @field:SerializedName("avatar") var avatar: String,
     @field:SerializedName("name") var name: String,
-    @field:SerializedName("bindings") var bindings: List<PlutoUserBinding>
+    @field:SerializedName("bindings") var bindings: Array<PlutoUserBinding>
 )
 
 data class PlutoUserBinding(
