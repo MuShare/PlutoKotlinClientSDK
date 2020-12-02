@@ -114,14 +114,17 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun updateUserInfo(completion: (() -> Unit)? = null) {
-        Pluto.getInstance()?.myInfo(success = { user ->
-            nameEditText.get()?.setText(user.name)
-            userIdEditText.get()?.setText(user.userId)
-            avatarImageView.get()?.let {
-                Glide.with(this).load(user.avatar).into(it)
+        Pluto.getInstance()?.myInfo(
+            isForceRefresh = false,
+            success = { user ->
+                nameEditText.get()?.setText(user.name)
+                userIdEditText.get()?.setText(user.userId)
+                avatarImageView.get()?.let {
+                    Glide.with(this).load(user.avatar).into(it)
+                }
+                completion?.let { it() }
             }
-            completion?.let { it() }
-        })
+        )
 
     }
 }
