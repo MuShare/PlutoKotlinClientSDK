@@ -48,6 +48,18 @@ interface PlutoService {
         @Body body: UpdateUserInfoPutData,
         @HeaderMap authorizationHeader: Map<String, String>
     ): Call<PlutoResponse>
+
+    @POST("v1/user/binding")
+    fun bind(
+        @Body body: BindPostData,
+        @HeaderMap authorizationHeader: Map<String, String>
+    ): Call<PlutoResponse>
+
+    @POST("/v1/user/unbinding")
+    fun unbind(
+        @Body body: UnbindPostData,
+        @HeaderMap authorizationHeader: Map<String, String>
+    ): Call<PlutoResponse>
 }
 
 class RefreshAuthPostData(
@@ -91,4 +103,15 @@ class UpdateUserInfoPutData(
     @field:SerializedName("name") var name: String?,
     @field:SerializedName("avatar") var avatar: String?,
     @field:SerializedName("user_id") var userId: String?
+)
+
+class BindPostData(
+    @field:SerializedName("type") var type: String,
+    @field:SerializedName("code") var code: String?,
+    @field:SerializedName("id_token") var idToken: String?,
+    @field:SerializedName("mail") var mail: String?
+)
+
+class UnbindPostData(
+    @field:SerializedName("type") var type: String
 )
