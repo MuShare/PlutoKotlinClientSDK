@@ -107,9 +107,9 @@ class UpdateUserInfoPutData(
 
 class BindPostData(
     @field:SerializedName("type") var type: String,
-    @field:SerializedName("code") var code: String?,
-    @field:SerializedName("id_token") var idToken: String?,
-    @field:SerializedName("mail") var mail: String?
+    @field:SerializedName("code") var code: String? = null,
+    @field:SerializedName("id_token") var idToken: String? = null,
+    @field:SerializedName("mail") var mail: String? = null
 )
 
 class UnbindPostData(
