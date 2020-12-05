@@ -73,6 +73,15 @@ fun Pluto.unbind(
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
+    val bindings = availableBindings
+    if (bindings == null) {
+        error?.invoke(PlutoError.notSignIn)
+        return
+    }
+    if (bindings.size == 1) {
+        error?.invoke(PlutoError.unbindNotAllow)
+        return
+    }
     getAuthorizationHeader(
         completion = { header ->
             if (header == null) {
