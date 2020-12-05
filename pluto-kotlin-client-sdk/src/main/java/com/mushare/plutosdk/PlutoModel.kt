@@ -102,17 +102,3 @@ internal class PlutoModel(context: Context) {
         infoJSONString = null
     }
 }
-
-data class PlutoUser(
-    @field:SerializedName("sub") var id: Int,
-    @field:SerializedName("user_id") var userId: String,
-    @field:SerializedName("user_id_updated") var userIdUpdated: Boolean,
-    @field:SerializedName("avatar") var avatar: String,
-    @field:SerializedName("name") var name: String,
-    @field:SerializedName("bindings") var bindings: Array<PlutoUserBinding>
-)
-
-data class PlutoUserBinding(
-    @field:SerializedName("login_type") val loginType: Pluto.LoginType,
-    @field:SerializedName("mail") var mail: String?
-)

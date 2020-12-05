@@ -7,7 +7,7 @@ import retrofit2.Response
 val availableLoginTypes: Array<Pluto.LoginType>
     get() = arrayOf(Pluto.LoginType.mail, Pluto.LoginType.mail)
 
-val Pluto.availableBindings: Array<PlutoUserBinding>?
+val Pluto.availableBindings: Array<PlutoUser.Binding>?
     get() = data.user?.bindings
 
 fun Pluto.bind(
