@@ -12,7 +12,7 @@ data class PlutoUser(
 ) {
     data class Binding(
         @field:SerializedName("login_type") val loginType: Pluto.LoginType,
-        @field:SerializedName("mail") var mail: String?
+        @field:SerializedName("mail") var mail: String
     )
 
     override fun equals(other: Any?): Boolean {
