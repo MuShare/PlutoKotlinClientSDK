@@ -1,7 +1,4 @@
-# Pluto Kotlin Client SDK
-Kotlin client SDK for pluto.
-
- # Pluto Swift Client SDK
+# Pluto Swift Client SDK
 
 ![build_check](https://github.com/MuShare/PlutoSwiftClientSDK/workflows/build_check/badge.svg)
 [![License](https://img.shields.io/cocoapods/l/PlutoSDK.svg?style=flat)](https://cocoapods.org/pods/PlutoSDK)
