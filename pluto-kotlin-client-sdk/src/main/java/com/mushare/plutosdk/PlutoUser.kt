@@ -42,9 +42,9 @@ data class PlutoUser(
     }
 
     val mail: Binding?
-        get() = bindings.firstOrNull { it.loginType == Pluto.LoginType.mail }
+        get() = bindings.firstOrNull { it.loginType == Pluto.LoginType.MAIL }
 
     val google: Binding?
-        get() = bindings.firstOrNull { it.loginType == Pluto.LoginType.google }
+        get() = bindings.firstOrNull { it.loginType == Pluto.LoginType.GOOGLE }
 }
 

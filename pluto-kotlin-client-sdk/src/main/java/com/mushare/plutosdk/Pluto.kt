@@ -6,6 +6,7 @@ import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.annotations.SerializedName
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -31,8 +32,11 @@ class Pluto private constructor() {
     }
 
     enum class LoginType(val identifier: String) {
-        mail("mail"),
-        google("google");
+        @SerializedName("mail")
+        MAIL("mail"),
+
+        @SerializedName("google")
+        GOOGLE("google");
         // TODO: wechat
 
         companion object {

@@ -5,7 +5,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 val availableLoginTypes: Array<Pluto.LoginType>
-    get() = arrayOf(Pluto.LoginType.mail, Pluto.LoginType.mail)
+    get() = arrayOf(Pluto.LoginType.MAIL, Pluto.LoginType.GOOGLE)
 
 val Pluto.availableBindings: Array<PlutoUser.Binding>?
     get() = data.user?.bindings
@@ -26,13 +26,13 @@ fun Pluto.bind(
             }
 
             val postData = when (type) {
-                Pluto.LoginType.mail -> {
+                Pluto.LoginType.MAIL -> {
                     BindPostData(
                         type = type.identifier,
                         mail = authString
                     )
                 }
-                Pluto.LoginType.google -> {
+                Pluto.LoginType.GOOGLE -> {
                     BindPostData(
                         type = type.identifier,
                         idToken = authString
