@@ -38,6 +38,11 @@ interface PlutoService {
         @Body body: LoginWithGooglePostData
     ): Call<PlutoResponseWithBody<LoginResponse>>
 
+    @POST("/v1/user/login/wechat/mobile")
+    fun loginWithWeChat(
+        @Body body: LoginWithWeChatPostData
+    ): Call<PlutoResponseWithBody<LoginResponse>>
+
     @GET("v1/user/info")
     fun getUserInfo(
         @HeaderMap authorizationHeader: Map<String, String>
@@ -95,6 +100,12 @@ class LoginWithAccountPostData(
 
 class LoginWithGooglePostData(
     @field:SerializedName("id_token") var idToken: String,
+    @field:SerializedName("device_id") var deviceId: String,
+    @field:SerializedName("app_id") var appId: String
+)
+
+class LoginWithWeChatPostData(
+    @field:SerializedName("code") var idToken: String,
     @field:SerializedName("device_id") var deviceId: String,
     @field:SerializedName("app_id") var appId: String
 )
