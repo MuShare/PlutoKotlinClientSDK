@@ -46,5 +46,8 @@ data class PlutoUser(
 
     val google: Binding?
         get() = bindings.firstOrNull { it.loginType == Pluto.LoginType.GOOGLE }
+
+    val wechat: Binding?
+        get() = bindings.firstOrNull { it.loginType == Pluto.LoginType.WECHAT }
 }
 
