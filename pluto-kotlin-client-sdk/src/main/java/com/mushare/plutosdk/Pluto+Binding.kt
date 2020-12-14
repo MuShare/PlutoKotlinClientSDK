@@ -4,8 +4,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-val availableLoginTypes: Array<Pluto.LoginType>
-    get() = arrayOf(Pluto.LoginType.MAIL, Pluto.LoginType.GOOGLE)
+val Pluto.availableLoginTypes: Array<Pluto.LoginType>
+    get() = arrayOf(Pluto.LoginType.MAIL, Pluto.LoginType.GOOGLE, Pluto.LoginType.WECHAT)
 
 val Pluto.availableBindings: Array<PlutoUser.Binding>?
     get() = data.user?.bindings
@@ -36,6 +36,12 @@ fun Pluto.bind(
                     BindPostData(
                         type = type.identifier,
                         idToken = authString
+                    )
+                }
+                Pluto.LoginType.WECHAT -> {
+                    BindPostData(
+                        type = type.identifier,
+                        code = authString
                     )
                 }
             }

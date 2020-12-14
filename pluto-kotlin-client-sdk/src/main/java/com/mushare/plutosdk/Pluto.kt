@@ -36,8 +36,10 @@ class Pluto private constructor() {
         MAIL("mail"),
 
         @SerializedName("google")
-        GOOGLE("google");
-        // TODO: wechat
+        GOOGLE("google"),
+
+        @SerializedName("wechat")
+        WECHAT("wechat");
 
         companion object {
             private val map = values().associateBy(LoginType::identifier)
