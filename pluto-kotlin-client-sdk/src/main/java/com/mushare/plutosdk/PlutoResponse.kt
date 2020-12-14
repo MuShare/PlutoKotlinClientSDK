@@ -63,6 +63,7 @@ enum class PlutoError(val value: Int) {
     invalidRefreshToken(3002),
     invalidJWTToken(3003),
     invalidGoogleIDToken(3004),
+    invalidWeChatCode(3005),
     invalidAvatarFormat(3006),
     jwtTokenExpired(3008),
     invalidAccessToken(3009),
