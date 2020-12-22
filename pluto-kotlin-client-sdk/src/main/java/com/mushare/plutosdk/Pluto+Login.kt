@@ -84,6 +84,7 @@ fun Pluto.loginWithAccount(
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
+    state.postValue(Pluto.State.loading)
     val deviceId = data.deviceID
     if (deviceId == null) {
         error?.invoke(PlutoError.badRequest)
@@ -105,6 +106,7 @@ fun Pluto.loginWithGoogle(
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
+    state.postValue(Pluto.State.loading)
     val deviceId = data.deviceID
     if (deviceId == null) {
         error?.invoke(PlutoError.badRequest)
@@ -126,6 +128,7 @@ fun Pluto.loginWithWeChat(
     error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
+    state.postValue(Pluto.State.loading)
     val deviceId = data.deviceID
     if (deviceId == null) {
         error?.invoke(PlutoError.badRequest)
@@ -179,7 +182,7 @@ fun Pluto.resetPassword(
 
 fun Pluto.logout() {
     data.clear()
-    state.postValue(Pluto.State.notSignin)
+    state.postValue(Pluto.State.notSignIn)
 }
 
 private fun Pluto.handleLoginCallback(
@@ -211,7 +214,7 @@ private fun Pluto.handleLoginCallback(
                     error?.invoke(PlutoError.parseError)
                     return
                 }
-                state.postValue(Pluto.State.signin)
+                state.postValue(Pluto.State.signIn)
                 success?.invoke()
             } else {
                 error?.invoke(plutoResponse.errorCode())

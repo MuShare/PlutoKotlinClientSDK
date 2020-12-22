@@ -15,9 +15,9 @@ import java.util.*
 
 class Pluto private constructor() {
     enum class State {
-        notSignin,
+        notSignIn,
         loading,
-        signin
+        signIn
     }
 
     class PlutoRequestHandler {
@@ -53,7 +53,7 @@ class Pluto private constructor() {
     internal val data by lazy { PlutoModel(context) }
 
     val state: MutableLiveData<State> by lazy {
-        MutableLiveData(if (data.isTokenNull) State.notSignin else State.signin)
+        MutableLiveData(if (data.isTokenNull) State.notSignIn else State.signIn)
     }
 
     internal val gson: Gson by lazy { GsonBuilder().serializeNulls().create() }
@@ -85,9 +85,9 @@ class Pluto private constructor() {
         getAccessToken(completion = {
             state.postValue(
                 if (it == null) {
-                    State.notSignin
+                    State.notSignIn
                 } else {
-                    State.signin
+                    State.signIn
                 }
             )
         })

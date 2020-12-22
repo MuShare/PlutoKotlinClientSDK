@@ -106,7 +106,7 @@ class LoginActivity : AppCompatActivity() {
 
         Pluto.getInstance()?.state?.observe(this, Observer {
             when (it) {
-                Pluto.State.signin -> {
+                Pluto.State.signIn -> {
                     startActivity(Intent(this, ProfileActivity::class.java))
                 }
             }
