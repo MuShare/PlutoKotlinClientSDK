@@ -182,7 +182,7 @@ fun Pluto.resetPassword(
 
 fun Pluto.logout() {
     data.clear()
-    state.postValue(Pluto.State.notSignin)
+    state.postValue(Pluto.State.notSignIn)
 }
 
 private fun Pluto.handleLoginCallback(
@@ -214,7 +214,7 @@ private fun Pluto.handleLoginCallback(
                     error?.invoke(PlutoError.parseError)
                     return
                 }
-                state.postValue(Pluto.State.signin)
+                state.postValue(Pluto.State.signIn)
                 success?.invoke()
             } else {
                 error?.invoke(plutoResponse.errorCode())
