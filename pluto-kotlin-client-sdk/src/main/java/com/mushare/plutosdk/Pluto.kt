@@ -17,7 +17,8 @@ class Pluto private constructor() {
     enum class State {
         notSignIn,
         loading,
-        signIn
+        signIn,
+        invalidRefreshToken
     }
 
     class PlutoRequestHandler {
