@@ -46,18 +46,25 @@ private fun Pluto.refreshToken(
                 response: Response<PlutoResponseWithBody<RefreshAuthResponse>>
             ) {
                 val plutoResponse = response.body()
-                if (plutoResponse != null && plutoResponse.statusOK()) {
-                    val accessToken = plutoResponse.getBody().accessToken
-                    val refreshToken = plutoResponse.getBody().refreshToken
-                    if (data.updateAccessToken(accessToken)) {
-                        data.refreshToken = refreshToken
-                        completion(accessToken)
-                    } else {
+                if (plutoResponse == null) {
+                    completion(null)
+                    return
+                }
+                plutoResponse.analysis(
+                    success = {
+                        val accessToken = plutoResponse.getBody().accessToken
+                        val refreshToken = plutoResponse.getBody().refreshToken
+                        if (data.updateAccessToken(accessToken)) {
+                            data.refreshToken = refreshToken
+                            completion(accessToken)
+                        } else {
+                            completion(null)
+                        }
+                    },
+                    error = {
                         completion(null)
                     }
-                } else {
-                    completion(null)
-                }
+                )
             }
         })
     }.also {

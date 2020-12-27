@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.annotations.SerializedName
 import okhttp3.OkHttpClient
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
@@ -17,7 +18,8 @@ class Pluto private constructor() {
     enum class State {
         notSignIn,
         loading,
-        signIn
+        signIn,
+        invalidRefreshToken
     }
 
     class PlutoRequestHandler {
@@ -113,6 +115,19 @@ class Pluto private constructor() {
                 }
                 return Pluto().also { instance = it }
             }
+        }
+    }
+
+    fun handleResponse(
+        response: Response<PlutoResponse>,
+        success: () -> Unit,
+        error: (PlutoError) -> Unit
+    ) {
+        val plutoResponse = response.body()
+        if (plutoResponse != null) {
+            plutoResponse.analysis(success, error)
+        } else {
+            error(parseErrorCodeFromErrorBody(response.errorBody(), gson))
         }
     }
 }

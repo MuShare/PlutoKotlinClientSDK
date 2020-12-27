@@ -16,9 +16,27 @@ open class PlutoResponse(
     @field:SerializedName("status") private var status: String,
     @field:SerializedName("error") private var error: PlutoResponseErrorData
 ) {
-    fun statusOK(): Boolean = status == "ok"
-    fun errorCode(): PlutoError =
-        PlutoError.values().find { it.value == error.code } ?: PlutoError.unknown
+    private val isStatusOK: Boolean
+        get() = status == "ok"
+
+    val errorCode: PlutoError
+        get() = PlutoError.values().find { it.value == error.code } ?: PlutoError.unknown
+
+    fun analysis(success: () -> Unit, error: (PlutoError) -> Unit) {
+        if (isStatusOK) {
+            success()
+        } else {
+            when(errorCode) {
+                PlutoError.invalidRefreshToken -> {
+                    Pluto.getInstance()?.let {
+                        it.data.clear()
+                        it.state.value = Pluto.State.invalidRefreshToken
+                    }
+                }
+            }
+            error(errorCode)
+        }
+    }
 }
 
 class PlutoResponseErrorData(
@@ -40,7 +58,7 @@ internal fun parseErrorCodeFromErrorBody(errorBody: ResponseBody?, gson: Gson): 
         return PlutoError.badRequest
     }
     val response = gson.fromJson(errorBody.string(), PlutoResponse::class.java)
-    return response?.errorCode() ?: PlutoError.badRequest
+    return response?.errorCode ?: PlutoError.badRequest
 }
 
 enum class PlutoError(val value: Int) {

@@ -3,7 +3,6 @@ package com.mushare.plutosdk
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
 import org.json.JSONObject
 import java.util.*
 
