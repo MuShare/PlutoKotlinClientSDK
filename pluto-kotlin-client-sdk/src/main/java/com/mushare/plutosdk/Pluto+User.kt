@@ -43,7 +43,7 @@ fun Pluto.myInfo(
                         t: Throwable
                     ) {
                         t.printStackTrace()
-                        error?.invoke(PlutoError.badRequest)
+                        error(PlutoError.badRequest)
                     }
 
                     override fun onResponse(
@@ -51,21 +51,19 @@ fun Pluto.myInfo(
                         response: Response<PlutoResponseWithBody<PlutoUser>>
                     ) {
                         val plutoResponse = response.body()
-                        if (plutoResponse != null) {
-                            if (plutoResponse.statusOK()) {
+                        if (plutoResponse == null) {
+                            error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                            return
+                        }
+                        plutoResponse.analysis(
+                            success = {
                                 data.user = plutoResponse.getBody()
                                 success(plutoResponse.getBody())
-                            } else {
-                                error?.invoke(plutoResponse.errorCode())
+                            },
+                            error = {
+                                error?.invoke(plutoResponse.errorCode)
                             }
-                        } else {
-                            error?.invoke(
-                                parseErrorCodeFromErrorBody(
-                                    response.errorBody(),
-                                    gson
-                                )
-                            )
-                        }
+                        )
                     }
                 })
             }.also {
@@ -79,7 +77,7 @@ fun Pluto.myInfo(
 fun Pluto.updateUserId(
     userId: String,
     success: () -> Unit,
-    error: ((PlutoError) -> Unit)? = null,
+    error: (PlutoError) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
     val postData = UpdateUserInfoPutData(null, null, userId)
@@ -89,7 +87,7 @@ fun Pluto.updateUserId(
 fun Pluto.updateName(
     name: String,
     success: () -> Unit,
-    error: ((PlutoError) -> Unit)? = null,
+    error: (PlutoError) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
     val postData = UpdateUserInfoPutData(name, null, null)
@@ -99,7 +97,7 @@ fun Pluto.updateName(
 fun Pluto.uploadAvatar(
     imageFile: File,
     success: () -> Unit,
-    error: ((PlutoError) -> Unit)? = null,
+    error: (PlutoError) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
     val bitmap = BitmapFactory.decodeFile(imageFile.absolutePath)
@@ -113,7 +111,7 @@ fun Pluto.uploadAvatar(
 private fun Pluto.updateUserInfo(
     postData: UpdateUserInfoPutData,
     success: () -> Unit,
-    error: ((PlutoError) -> Unit)? = null,
+    error: (PlutoError) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
     getAuthorizationHeader(
@@ -135,21 +133,7 @@ private fun Pluto.updateUserInfo(
                         call: Call<PlutoResponse>,
                         response: Response<PlutoResponse>
                     ) {
-                        val plutoResponse = response.body()
-                        if (plutoResponse != null) {
-                            if (plutoResponse.statusOK()) {
-                                success()
-                            } else {
-                                error?.invoke(plutoResponse.errorCode())
-                            }
-                        } else {
-                            error?.invoke(
-                                parseErrorCodeFromErrorBody(
-                                    response.errorBody(),
-                                    gson
-                                )
-                            )
-                        }
+                        handleResponse(response, success, error)
                     }
                 })
             }.also {

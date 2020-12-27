@@ -14,7 +14,7 @@ fun Pluto.bind(
     type: Pluto.LoginType,
     authString: String,
     success: () -> Unit,
-    error: ((PlutoError) -> Unit)? = null,
+    error: (PlutoError) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
     getAuthorizationHeader(
@@ -56,16 +56,7 @@ fun Pluto.bind(
                         call: Call<PlutoResponse>,
                         response: Response<PlutoResponse>
                     ) {
-                        val plutoResponse = response.body()
-                        if (plutoResponse != null) {
-                            if (plutoResponse.statusOK()) {
-                                success()
-                            } else {
-                                error?.invoke(plutoResponse.errorCode())
-                            }
-                        } else {
-                            error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
-                        }
+                        handleResponse(response, success, error)
                     }
                 })
             }
@@ -76,7 +67,7 @@ fun Pluto.bind(
 fun Pluto.unbind(
     type: Pluto.LoginType,
     success: () -> Unit,
-    error: ((PlutoError) -> Unit)? = null,
+    error: (PlutoError) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
     val bindings = availableBindings
@@ -108,16 +99,7 @@ fun Pluto.unbind(
                         call: Call<PlutoResponse>,
                         response: Response<PlutoResponse>
                     ) {
-                        val plutoResponse = response.body()
-                        if (plutoResponse != null) {
-                            if (plutoResponse.statusOK()) {
-                                success()
-                            } else {
-                                error?.invoke(plutoResponse.errorCode())
-                            }
-                        } else {
-                            error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
-                        }
+                        handleResponse(response, success, error)
                     }
                 })
             }
