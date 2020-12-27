@@ -113,7 +113,7 @@ fun Pluto.loginWithWeChat(
     state.value = Pluto.State.loading
     val deviceId = data.deviceID
     if (deviceId == null) {
-        error?.invoke(PlutoError.badRequest)
+        error(PlutoError.badRequest)
         return
     }
     val postData = LoginWithWeChatPostData(code, deviceId, appId)
@@ -134,7 +134,7 @@ fun Pluto.resetPassword(
         enqueue(object : Callback<PlutoResponse> {
             override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                 t.printStackTrace()
-                error?.invoke(PlutoError.badRequest)
+                error(PlutoError.badRequest)
             }
 
             override fun onResponse(call: Call<PlutoResponse>, response: Response<PlutoResponse>) {
@@ -162,7 +162,7 @@ private fun Pluto.handleLoginCallback(
             t: Throwable
         ) {
             t.printStackTrace()
-            error?.invoke(PlutoError.badRequest)
+            error(PlutoError.badRequest)
         }
 
         override fun onResponse(
@@ -171,7 +171,7 @@ private fun Pluto.handleLoginCallback(
         ) {
             val plutoResponse = response.body()
             if (plutoResponse == null) {
-                error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                error(parseErrorCodeFromErrorBody(response.errorBody(), gson))
                 return
             }
             plutoResponse.analysis(
@@ -179,7 +179,7 @@ private fun Pluto.handleLoginCallback(
                     val body = plutoResponse.getBody()
                     data.refreshToken = body.refreshToken
                     if (!data.updateAccessToken(body.accessToken)) {
-                        error?.invoke(PlutoError.parseError)
+                        error(PlutoError.parseError)
                         return@analysis
                     }
                     state.value = Pluto.State.signIn

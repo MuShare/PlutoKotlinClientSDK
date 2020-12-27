@@ -21,7 +21,7 @@ fun Pluto.bind(
         completion = { header ->
             if (header == null) {
                 handler?.setCall(null)
-                error?.invoke(PlutoError.notSignIn)
+                error(PlutoError.notSignIn)
                 return@getAuthorizationHeader
             }
 
@@ -49,7 +49,7 @@ fun Pluto.bind(
                 enqueue(object : Callback<PlutoResponse> {
                     override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                         t.printStackTrace()
-                        error?.invoke(PlutoError.badRequest)
+                        error(PlutoError.badRequest)
                     }
 
                     override fun onResponse(
@@ -72,18 +72,18 @@ fun Pluto.unbind(
 ) {
     val bindings = availableBindings
     if (bindings == null) {
-        error?.invoke(PlutoError.notSignIn)
+        error(PlutoError.notSignIn)
         return
     }
     if (bindings.size == 1) {
-        error?.invoke(PlutoError.unbindNotAllow)
+        error(PlutoError.unbindNotAllow)
         return
     }
     getAuthorizationHeader(
         completion = { header ->
             if (header == null) {
                 handler?.setCall(null)
-                error?.invoke(PlutoError.notSignIn)
+                error(PlutoError.notSignIn)
                 return@getAuthorizationHeader
             }
 
@@ -92,7 +92,7 @@ fun Pluto.unbind(
                 enqueue(object : Callback<PlutoResponse> {
                     override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                         t.printStackTrace()
-                        error?.invoke(PlutoError.badRequest)
+                        error(PlutoError.badRequest)
                     }
 
                     override fun onResponse(

@@ -118,7 +118,7 @@ private fun Pluto.updateUserInfo(
         completion = { header ->
             if (header == null) {
                 handler?.setCall(null)
-                error?.invoke(PlutoError.notSignIn)
+                error(PlutoError.notSignIn)
                 return@getAuthorizationHeader
             }
 
@@ -126,7 +126,7 @@ private fun Pluto.updateUserInfo(
                 enqueue(object : Callback<PlutoResponse> {
                     override fun onFailure(call: Call<PlutoResponse>, t: Throwable) {
                         t.printStackTrace()
-                        error?.invoke(PlutoError.badRequest)
+                        error(PlutoError.badRequest)
                     }
 
                     override fun onResponse(
