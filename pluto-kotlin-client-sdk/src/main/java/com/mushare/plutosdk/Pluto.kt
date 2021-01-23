@@ -98,13 +98,16 @@ class Pluto private constructor() {
         private lateinit var server: String
         internal lateinit var appId: String
         internal lateinit var context: Context
+        internal var isDebug = false
+
         private var isInitialized: Boolean = false
 
-        fun initialize(_context: Context, _server: String, _appId: String) {
-            context = _context.applicationContext
-            server = _server
-            appId = _appId
-            isInitialized = true
+        fun initialize(context: Context, server: String, appId: String, isDebug: Boolean = false) {
+            this.context = context.applicationContext
+            this.server = server
+            this.appId = appId
+            this.isDebug = isDebug
+            this.isInitialized = true
         }
 
         fun getInstance(): Pluto? {

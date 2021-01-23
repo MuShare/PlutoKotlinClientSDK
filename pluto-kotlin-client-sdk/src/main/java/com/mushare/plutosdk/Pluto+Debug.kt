@@ -4,7 +4,7 @@ import android.util.Log
 import java.util.*
 
 fun Pluto.simulateInvalidRefreshToken() {
-    if (BuildConfig.DEBUG) {
+    if (Pluto.isDebug) {
         data.refreshToken = UUID.randomUUID().toString()
     } else {
         Log.d("Pluto", "Pluto.simulateInvalidRefreshToken() should be invoked in DEBUG mode.")
@@ -12,7 +12,7 @@ fun Pluto.simulateInvalidRefreshToken() {
 }
 
 fun Pluto.simulateInvalidAccessToken() {
-    if (BuildConfig.DEBUG) {
+    if (Pluto.isDebug) {
         data.accessToken = UUID.randomUUID().toString()
     } else {
         Log.d("Pluto", "Pluto.simulateInvalidAccessToken() should be invoked in DEBUG mode.")
@@ -20,7 +20,7 @@ fun Pluto.simulateInvalidAccessToken() {
 }
 
 fun Pluto.resetExpire(date: Date) {
-    if (BuildConfig.DEBUG) {
+    if (Pluto.isDebug) {
         data.expire = date.time.toInt() / 1000
     } else {
         Log.d("Pluto", "Pluto.resetExpire(date: Date) should be invoked in DEBUG mode.")
