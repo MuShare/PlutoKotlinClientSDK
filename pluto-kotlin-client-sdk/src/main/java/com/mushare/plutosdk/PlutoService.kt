@@ -6,7 +6,7 @@ import retrofit2.http.*
 
 interface PlutoService {
     @POST("v1/token/refresh")
-    fun refreshAuth(
+    fun refreshAccessToken(
         @Body body: RefreshAuthPostData
     ): Call<PlutoResponseWithBody<RefreshAuthResponse>>
 

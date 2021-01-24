@@ -29,6 +29,7 @@ fun Pluto.getAccessToken(
 
 fun Pluto.refreshAccessToken(
     completion: (String?) -> Unit,
+    error: ((PlutoError) -> Unit)? = null,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
     val refreshToken = data.refreshToken
@@ -36,7 +37,7 @@ fun Pluto.refreshAccessToken(
         completion(null)
         return
     }
-    plutoService.refreshAuth(RefreshAuthPostData(refreshToken, Pluto.appId)).apply {
+    plutoService.refreshAccessToken(RefreshAuthPostData(refreshToken, Pluto.appId)).apply {
         enqueue(object : Callback<PlutoResponseWithBody<RefreshAuthResponse>> {
             override fun onFailure(
                 call: Call<PlutoResponseWithBody<RefreshAuthResponse>>,
@@ -52,7 +53,7 @@ fun Pluto.refreshAccessToken(
             ) {
                 val plutoResponse = response.body()
                 if (plutoResponse == null) {
-                    completion(null)
+                    error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
                     return
                 }
                 plutoResponse.analysis(

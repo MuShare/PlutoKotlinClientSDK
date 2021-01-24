@@ -26,14 +26,6 @@ open class PlutoResponse(
         if (isStatusOK) {
             success()
         } else {
-            when(errorCode) {
-                PlutoError.invalidRefreshToken, PlutoError.invalidAccessToken -> {
-                    Pluto.getInstance()?.let {
-                        it.data.clear()
-                        it.state.value = Pluto.State.invalidRefreshToken
-                    }
-                }
-            }
             error(errorCode)
         }
     }
@@ -58,7 +50,16 @@ internal fun parseErrorCodeFromErrorBody(errorBody: ResponseBody?, gson: Gson): 
         return PlutoError.badRequest
     }
     val response = gson.fromJson(errorBody.string(), PlutoResponse::class.java)
-    return response?.errorCode ?: PlutoError.badRequest
+    val plutoError = response?.errorCode ?: PlutoError.badRequest
+    when(plutoError) {
+        PlutoError.invalidRefreshToken, PlutoError.invalidAccessToken -> {
+            Pluto.getInstance()?.let {
+                it.data.clear()
+                it.state.value = Pluto.State.invalidRefreshToken
+            }
+        }
+    }
+    return plutoError
 }
 
 enum class PlutoError(val value: Int) {
