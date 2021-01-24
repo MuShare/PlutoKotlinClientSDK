@@ -9,7 +9,7 @@ fun Pluto.getAccessToken(
     completion: (String?) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
-    if (state != Pluto.State.signIn) {
+    if (state.value != Pluto.State.signIn) {
         completion(null)
         return
     }
