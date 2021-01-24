@@ -9,20 +9,25 @@ fun Pluto.getAccessToken(
     completion: (String?) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {
+    if (state != Pluto.State.signIn) {
+        completion(null)
+        return
+    }
     val accessToken = data.accessToken
-    val expire = data.expire
-    if (isForceRefresh || accessToken == null || expire == null || expire - System.currentTimeMillis() / 1000 < 5 * 60) {
-        refreshToken({
-            if (it == null) {
-                data.clear()
-            }
-            completion(it)
-        }, handler)
+    val expire = data.expire ?: 0
+    if (isForceRefresh || accessToken == null || expire - System.currentTimeMillis() / 1000 < 30) {
+        refreshAccessToken(
+            completion = {
+                completion(it)
+            },
+            handler = handler
+        )
+        return
     }
     completion(data.accessToken)
 }
 
-private fun Pluto.refreshToken(
+fun Pluto.refreshAccessToken(
     completion: (String?) -> Unit,
     handler: Pluto.PlutoRequestHandler? = null
 ) {

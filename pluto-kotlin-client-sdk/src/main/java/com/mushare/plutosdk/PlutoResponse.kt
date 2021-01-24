@@ -27,7 +27,7 @@ open class PlutoResponse(
             success()
         } else {
             when(errorCode) {
-                PlutoError.invalidRefreshToken -> {
+                PlutoError.invalidRefreshToken, PlutoError.invalidAccessToken -> {
                     Pluto.getInstance()?.let {
                         it.data.clear()
                         it.state.value = Pluto.State.invalidRefreshToken
