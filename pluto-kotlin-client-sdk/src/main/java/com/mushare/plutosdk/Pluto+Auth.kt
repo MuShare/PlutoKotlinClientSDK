@@ -53,7 +53,8 @@ fun Pluto.refreshAccessToken(
             ) {
                 val plutoResponse = response.body()
                 if (plutoResponse == null) {
-                    error?.invoke(parseErrorCodeFromErrorBody(response.errorBody(), gson))
+                    val plutoError = parseErrorCodeFromErrorBody(response.errorBody(), gson)
+                    error?.invoke(plutoError)
                     return
                 }
                 plutoResponse.analysis(
