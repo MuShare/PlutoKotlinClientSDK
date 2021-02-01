@@ -56,7 +56,7 @@ internal fun parseErrorCodeFromErrorBody(errorBody: ResponseBody?, gson: Gson): 
             Pluto.getInstance()?.let {
                 // Skip clearing data if refreshToken is null
                 // If refreshToken is null, it represents the not sign in state.
-                if (it.data.refreshToken != null) {
+                if (it.state != Pluto.State.invalidRefreshToken && it.data.refreshToken != null) {
                     it.data.clear()
                     it.state.value = Pluto.State.invalidRefreshToken
                 }
