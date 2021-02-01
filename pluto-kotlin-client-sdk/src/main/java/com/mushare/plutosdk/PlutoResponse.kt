@@ -51,11 +51,15 @@ internal fun parseErrorCodeFromErrorBody(errorBody: ResponseBody?, gson: Gson): 
     }
     val response = gson.fromJson(errorBody.string(), PlutoResponse::class.java)
     val plutoError = response?.errorCode ?: PlutoError.badRequest
-    when(plutoError) {
+    when (plutoError) {
         PlutoError.invalidRefreshToken, PlutoError.invalidAccessToken -> {
             Pluto.getInstance()?.let {
-                it.data.clear()
-                it.state.value = Pluto.State.invalidRefreshToken
+                // Skip clearing data if refreshToken is null
+                // If refreshToken is null, it represents the not sign in state.
+                if (it.data.refreshToken != null) {
+                    it.data.clear()
+                    it.state.value = Pluto.State.invalidRefreshToken
+                }
             }
         }
     }
