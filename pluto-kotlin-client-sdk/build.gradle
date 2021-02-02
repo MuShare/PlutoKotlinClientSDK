@@ -66,8 +66,8 @@ publishing {
             name = 'github'
             url = uri("https://maven.pkg.github.com/MuShare/PlutoKotlinClientSDK")
             credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("PASSWORD")
+                username = project.findProperty("name") ?: System.getenv("USERNAME")
+                password = project.findProperty("token") ?: System.getenv("TOKEN")
             }
         }
     }
