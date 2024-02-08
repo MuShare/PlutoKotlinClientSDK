@@ -11,7 +11,7 @@ import java.io.File
 
 val Pluto.currentUser: PlutoUser?
     get() {
-        if (state != Pluto.State.signIn) {
+        if (state.value != Pluto.State.signIn) {
             return null
         }
         return data.user
