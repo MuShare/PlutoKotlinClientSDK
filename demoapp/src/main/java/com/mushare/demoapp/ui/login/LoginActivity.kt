@@ -109,6 +109,7 @@ class LoginActivity : AppCompatActivity() {
                 Pluto.State.signIn -> {
                     startActivity(Intent(this, ProfileActivity::class.java))
                 }
+                else -> {}
             }
         })
 

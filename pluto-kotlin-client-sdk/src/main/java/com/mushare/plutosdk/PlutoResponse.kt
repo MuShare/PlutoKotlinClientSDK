@@ -62,6 +62,7 @@ internal fun parseErrorCodeFromErrorBody(errorBody: ResponseBody?, gson: Gson): 
                 }
             }
         }
+        else -> plutoError
     }
     return plutoError
 }
