@@ -43,7 +43,7 @@ fun Pluto.myInfo(
                         t: Throwable
                     ) {
                         t.printStackTrace()
-                        error(PlutoError.badRequest)
+                        error?.invoke(PlutoError.badRequest)
                     }
 
                     override fun onResponse(
